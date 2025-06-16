@@ -10,6 +10,8 @@ function App() {
   async function greet() {
     // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
     setGreetMsg(await invoke("greet", { name }));
+    const helloResponse = await invoke("say_hello", { name });
+    console.log(helloResponse)
   }
 
   return (
