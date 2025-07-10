@@ -1,24 +1,12 @@
-import { useEffect, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
-import { ImageSummary } from "./types/tauri/commands/docker/ImageSummary";
+import { Link } from "@tanstack/react-router";
 
 function App() {
-  const [images, setImages] = useState<ImageSummary[]>();
-
-  useEffect(() => {
-    invoke<ImageSummary[]>("list_images").then(
-      dockerImages => setImages(dockerImages)
-    );
-  }, [])
-
   return (
     <main className="container">
       <h1>Docker Hawk</h1>
-
-      {images && images.flatMap(image => (
-        <p>{image.RepoTags}</p>
-      ))}
+      <Link to="/about">Hi</Link>
+      <Link to="/images/list">Images</Link>
     </main>
   );
 }
