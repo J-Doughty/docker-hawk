@@ -1,20 +1,22 @@
 use std::sync::Arc;
 
-use tauri_plugin_shell::ShellExt;
 use bollard::Docker;
+use tauri_plugin_shell::ShellExt;
 
-mod errors;
 mod commands;
+mod errors;
 use crate::errors::{shell::ExecuteCommandError, strings::SerializableFromUtf8Error};
 
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
 #[tauri::command]
-async fn say_hello(app_handle: tauri::AppHandle, name: &str) -> Result<String, ExecuteCommandError> {
+async fn say_hello(
+    app_handle: tauri::AppHandle,
+    name: &str,
+) -> Result<String, ExecuteCommandError> {
     let shell = app_handle.shell();
 
     let output = shell
@@ -23,31 +25,21 @@ async fn say_hello(app_handle: tauri::AppHandle, name: &str) -> Result<String, E
         .output()
         .await?;
 
-    let command_output = String::from_utf8(output.stdout)
-        .map_err(SerializableFromUtf8Error::from)?;
-
-    //     let docker = Docker::connect_with_socket_defaults().unwrap();
-    //     let images = &docker.list_images(Some(ListImagesOptions::<String> {
-    //     all: true,
-    //     ..Default::default()
-    // })).await.unwrap();
-
-    // for image in images {
-    //     println!("-> {:?}", image);
-    // }
+    let command_output =
+        String::from_utf8(output.stdout).map_err(SerializableFromUtf8Error::from)?;
 
     return Ok(command_output);
 }
 
 struct DockerConnection {
-    pub client: Arc<Docker>
+    pub client: Arc<Docker>,
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let docker = Docker::connect_with_socket_defaults().unwrap();
     let docker_connection = DockerConnection {
-        client: docker.into()
+        client: docker.into(),
     };
 
     tauri::Builder::default()
