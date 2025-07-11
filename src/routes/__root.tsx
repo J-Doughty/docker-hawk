@@ -4,6 +4,7 @@ import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import Sidebar, { SidebarLink } from '../components/shared/sidebar/sidebar';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
+import HomeIcon from '@mui/icons-material/Home';
 
 import "./root.css";
 
@@ -13,7 +14,10 @@ export const Route = createRootRoute({
 
 const sidebarLinks: SidebarLink[][] = [
   [
-    { text: 'Containers', icon: <ListAltIcon />, link: "/" },
+    { text: 'Home', icon: <HomeIcon />, link: "/" },
+  ],
+  [
+    { text: 'Containers', icon: <ListAltIcon />, link: "/containers/list" },
     { text: 'Images', icon: <Inventory2Icon />, link: "/images/list" },
   ],
 ];
