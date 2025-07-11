@@ -7,14 +7,14 @@ import { Hawk } from "../../../assets";
 
 function App() {
     return (
-        <section className="flex-column flex-grow" style={{
+        <section className="flex-column h-100" style={{
             backgroundImage: `url(${Hawk})`,
             backgroundRepeat: "no-repeat",
             backgroundAttachment: "fixed",
             backgroundPosition: "center",
             backgroundSize: "contain",
         }}>
-            <Container className="flex-grow flex-column home-container" >
+            <Container className="h-100 flex-column home-container" >
                 <h1>Docker Hawk</h1>
                 <Box>
                     <p>
