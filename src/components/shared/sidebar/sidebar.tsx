@@ -130,7 +130,7 @@ export default function Sidebar({ children, sidebarLinks }: { children: React.Re
     };
 
     return (
-        <Box className="h-100">
+        <Box className="flex-column flex-grow">
             <Drawer variant="permanent" open={open}>
                 <DrawerHeader>
                     <IconButton onClick={() => open ? handleDrawerClose() : handleDrawerOpen()}>
@@ -150,7 +150,7 @@ export default function Sidebar({ children, sidebarLinks }: { children: React.Re
             </Drawer>
             <Box component="main"
                 sx={[(theme) => ({ marginLeft: open ? `${drawerWidth}px` : calculateClosedWidth(theme) })]}
-                className="h-100"
+                className="flex-column flex-grow"
             >
                 {children}
             </Box>
