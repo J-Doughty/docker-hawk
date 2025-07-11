@@ -3,12 +3,16 @@ import Container from "@mui/material/Container";
 import { Link } from "@tanstack/react-router";
 
 import "./home.css"
-import { Hawk } from "../../../assets";
+import { DarkHawk, LightHawk } from "../../../assets";
+import { useTheme } from "@mui/material/styles";
 
 function App() {
+    const theme = useTheme();
+    const hawkImage = theme.palette.mode == "light" ? LightHawk : DarkHawk;
+
     return (
         <section className="flex-column flex-grow" style={{
-            backgroundImage: `url(${Hawk})`,
+            backgroundImage: `url(${hawkImage})`,
             backgroundRepeat: "no-repeat",
             backgroundAttachment: "fixed",
             backgroundPosition: "center",
