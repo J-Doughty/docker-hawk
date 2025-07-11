@@ -150,7 +150,7 @@ export default function Sidebar({ children, sidebarLinks }: { children: React.Re
             </Drawer>
             <Box component="main"
                 sx={[(theme) => ({ marginLeft: open ? `${drawerWidth}px` : calculateClosedWidth(theme) })]}
-                className="vh-100"
+                className="h-100"
             >
                 {children}
             </Box>

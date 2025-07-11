@@ -25,7 +25,7 @@ const sidebarLinks: SidebarLink[][] = [
 function RootComponent() {
   return (
     <React.Fragment>
-      <div className='vh-100'>
+      <div className='h-100'>
         <Sidebar sidebarLinks={sidebarLinks}>
           <div className="main-container h-100">
             <Outlet />
