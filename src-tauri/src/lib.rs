@@ -49,7 +49,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             greet,
             say_hello,
-            commands::docker::list_images
+            commands::docker::list_images,
+            commands::docker::list_containers,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
