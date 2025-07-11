@@ -31,13 +31,15 @@ const openedMixin = (theme: Theme): CSSObject => ({
     overflowX: 'hidden',
 });
 
+const calculateClosedWidth = (theme: Theme) => (`calc(${theme.spacing(7)} + 1px)`)
+
 const closedMixin = (theme: Theme): CSSObject => ({
     transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
     }),
     overflowX: 'hidden',
-    width: `calc(${theme.spacing(7)} + 1px)`,
+    width: calculateClosedWidth(theme),
     [theme.breakpoints.up('sm')]: {
         width: `calc(${theme.spacing(8)} + 1px)`,
     },
@@ -128,7 +130,7 @@ export default function Sidebar({ children, sidebarLinks }: { children: React.Re
     };
 
     return (
-        <Box sx={{ display: 'flex' }}>
+        <Box className="flex-column flex-grow">
             <Drawer variant="permanent" open={open}>
                 <DrawerHeader>
                     <IconButton onClick={() => open ? handleDrawerClose() : handleDrawerOpen()}>
@@ -146,9 +148,12 @@ export default function Sidebar({ children, sidebarLinks }: { children: React.Re
                     </>
                 ))}
             </Drawer>
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <Box component="main"
+                sx={[(theme) => ({ marginLeft: open ? `${drawerWidth}px` : calculateClosedWidth(theme) })]}
+                className="flex-column flex-grow"
+            >
                 {children}
             </Box>
-        </Box>
+        </Box >
     );
 }

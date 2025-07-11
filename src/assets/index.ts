@@ -1,1 +1,1 @@
-export { default as ContainerIcon } from './container.svg';
+export { default as Hawk } from './hawk.svg';
