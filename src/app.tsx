@@ -1,4 +1,4 @@
-import { ColorSystemOptions, createTheme, ThemeOptions, ThemeProvider } from "@mui/material/styles";
+import { ColorSystemOptions, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { routeTree } from './routeTree.gen'

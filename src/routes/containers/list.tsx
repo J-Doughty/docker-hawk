@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { invoke } from '@tauri-apps/api/core';
 import { useEffect, useState } from 'react';
-import { ContainerSummary } from '../../types/tauri/commands/docker/containerSummary';
+import { ContainerSummary } from '../../types/tauri/commands/docker/ContainerSummary';
 
 export const Route = createFileRoute('/containers/list')({
   component: RouteComponent,
