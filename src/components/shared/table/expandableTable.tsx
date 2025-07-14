@@ -8,22 +8,26 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Typography from "@mui/material/Typography";
 import React from "react";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
-interface TableColumn<T extends string> {
+interface ColumnDefinition<T extends string> {
     key: T;
     displayName: string | React.ReactNode;
     align?: 'inherit' | 'left' | 'center' | 'right' | 'justify';
 }
 
-type TableRowKey<T extends string, U extends TableColumn<T>[]> = U[number]["key"]
+type ColumnKey<T extends string, U extends ColumnDefinition<T>[]> = U[number]["key"]
 
-type TableRow<T extends string> = Record<TableRowKey<T, TableColumn<T>[]>, string | number | undefined | null>
+type RowValues<T extends string> = Record<ColumnKey<T, ColumnDefinition<T>[]>, string | number | undefined | null>
 
-function Row<T extends string>({ columns, row }: { columns: TableColumn<T>[], row: TableRow<T> }) {
+interface RowDefinition<T extends string> {
+    rowValues: RowValues<T>;
+    expandablePanel: React.ReactNode;
+}
+
+function Row<T extends string>({ columns, rowValues, expandedPanel }: { columns: ColumnDefinition<T>[], rowValues: RowValues<T>, expandedPanel: React.ReactNode }) {
     const [open, setOpen] = React.useState(false);
 
     return (
@@ -38,52 +42,26 @@ function Row<T extends string>({ columns, row }: { columns: TableColumn<T>[], ro
                         {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
-                {columns.map((column, i) => (
+                {columns.map(column => (
                     <TableCell align={column.align} component="td" scope="row">
-                        {row[column.key]}
+                        {rowValues[column.key]}
                     </TableCell>
                 ))}
             </TableRow>
             <TableRow>
-                {/* <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 1 }}>
-                            <Typography variant="h6" gutterBottom component="div">
-                                History
-                            </Typography>
-                            <Table size="small" aria-label="purchases">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Date</TableCell>
-                                        <TableCell>Customer</TableCell>
-                                        <TableCell align="right">Amount</TableCell>
-                                        <TableCell align="right">Total price ($)</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {row.history.map((historyRow) => (
-                                        <TableRow key={historyRow.date}>
-                                            <TableCell component="th" scope="row">
-                                                {historyRow.date}
-                                            </TableCell>
-                                            <TableCell>{historyRow.customerId}</TableCell>
-                                            <TableCell align="right">{historyRow.amount}</TableCell>
-                                            <TableCell align="right">
-                                                {Math.round(historyRow.amount * row.price * 100) / 100}
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                            {expandedPanel}
                         </Box>
                     </Collapse>
-                </TableCell> */}
+                </TableCell>
             </TableRow>
         </React.Fragment>
     );
 }
 
-function ExpandableTable<T extends string>({ columns, rows }: { columns: TableColumn<T>[], rows: TableRow<T>[] }) {
+function ExpandableTable<T extends string>({ columns, rows }: { columns: ColumnDefinition<T>[], rows: RowDefinition<T>[] }) {
     return (
         <TableContainer component={Paper}>
             <Table aria-label="collapsible table">
@@ -97,7 +75,7 @@ function ExpandableTable<T extends string>({ columns, rows }: { columns: TableCo
                 </TableHead>
                 <TableBody>
                     {rows.map((row) => (
-                        <Row columns={columns} row={row} />
+                        <Row columns={columns} rowValues={row.rowValues} expandedPanel={row.expandablePanel} />
                     ))}
                 </TableBody>
             </Table>

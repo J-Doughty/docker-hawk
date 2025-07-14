@@ -39,13 +39,16 @@ function RouteComponent() {
       ]}
         rows={[
           {
-            dessert: "Frozen yoghurt",
-            calories: 5,
-            fat: 10,
-            carbs: 186,
-            protein: 15,
-            // price: 14.58,
-          }
+            rowValues: {
+              dessert: "Frozen yoghurt",
+              calories: 5,
+              fat: 10,
+              carbs: 186,
+              protein: 15,
+              // price: 14.58,
+            },
+            expandablePanel: <>Expanded</>
+          },
         ]}
       />
     </section>
