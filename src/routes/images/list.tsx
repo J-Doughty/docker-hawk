@@ -2,10 +2,24 @@ import { createFileRoute } from "@tanstack/react-router";
 import { invoke } from "@tauri-apps/api/core";
 import { useEffect, useState } from "react";
 import { ImageSummary } from "../../types/tauri/commands/docker/ImageSummary";
+import ExpandableTable from "../../components/shared/table/expandableTable";
 
 export const Route = createFileRoute("/images/list")({
   component: RouteComponent,
 });
+
+const getSizeAsString = (numBytes: number) => {
+  const bytesInAMegaByte = 1e6;
+  const bytesInAGigaByte = 1e9;
+
+  const numGigaBytes = numBytes / bytesInAGigaByte;
+
+  if (numGigaBytes > 1) {
+    return `${numGigaBytes.toFixed(2)} GB`
+  }
+
+  return `${(numBytes / bytesInAMegaByte).toFixed(2)} MB`
+}
 
 function RouteComponent() {
   const [images, setImages] = useState<ImageSummary[]>();
@@ -18,7 +32,26 @@ function RouteComponent() {
 
   return (
     <section>
-      <div>{images && images.flatMap((image) => <p>{image.RepoTags}</p>)}</div>
+      {images && (
+        <ExpandableTable
+          columns={[
+            { key: "name", displayName: "Name" },
+            { key: "size", displayName: "Size" },
+            { key: "numContainers", displayName: "No. containers" },
+            { key: "createdAt", displayName: "Created date" },
+          ]}
+          rows={images.map((image) => ({
+            key: image.Id,
+            rowValues: {
+              name: image.RepoTags.join(", "),
+              size: getSizeAsString(image.Size),
+              numContainers: image.Containers,
+              createdAt: new Date(image.Created * 1000).toLocaleDateString(),
+            },
+            expandablePanel: <>Expanded</>,
+          }))}
+        />
+      )}
     </section>
   );
 }

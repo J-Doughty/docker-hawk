@@ -23,6 +23,8 @@ type ColumnKey<
   U extends ColumnDefinition<T>[],
 > = U[number]["key"];
 
+// Record containg the values for the row, where keys are column names and values are
+// the corresponding value
 type RowValues<T extends string> = Record<
   ColumnKey<T, ColumnDefinition<T>[]>,
   string | number | undefined | null
