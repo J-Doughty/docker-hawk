@@ -27,15 +27,12 @@ interface ColumnDefinition<T extends string> {
   minWidth?: string;
 }
 
-type ColumnKey<
-  T extends string,
-  U extends ColumnDefinition<T>[],
-> = U[number]["key"];
+type ColumnKey<T extends readonly ColumnDefinition<string>[]> = T[number]["key"];
 
 // Record containg the values for the row, where keys are column names and values are
 // the corresponding value
 type RowValues<T extends string> = Record<
-  ColumnKey<T, ColumnDefinition<T>[]>,
+  ColumnKey<ColumnDefinition<T>[]>,
   string | number | undefined | null
 >;
 
