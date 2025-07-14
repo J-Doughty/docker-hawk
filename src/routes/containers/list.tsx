@@ -30,19 +30,21 @@ function RouteComponent() {
                               Carbs&nbsp;(g)
                               Protein&nbsp;(g) */}
       <ExpandableTable columns={[
-        { key: "calories", displayName: "Calories" },
-        { key: "fat", displayName: <>Fat&nbsp;(g)</> },
-        { key: "carbs", displayName: <>Carbs&nbsp;(g)</> },
-        { key: "protein", displayName: <>Protein&nbsp;(g)</> },
-        { key: "price", displayName: <>Price&nbsp;(£)</> },
+        { key: "dessert", displayName: "Dessert (100g serving)" },
+        { key: "calories", displayName: "Calories", align: "right" },
+        { key: "fat", displayName: <>Fat&nbsp;(g)</>, align: "right" },
+        { key: "carbs", displayName: <>Carbs&nbsp;(g)</>, align: "right" },
+        { key: "protein", displayName: <>Protein&nbsp;(g)</>, align: "right" },
+        // { key: "price", displayName: <>Price&nbsp;(£)</> },
       ]}
         rows={[
           {
+            dessert: "Frozen yoghurt",
             calories: 5,
             fat: 10,
             carbs: 186,
             protein: 15,
-            price: 14.58,
+            // price: 14.58,
           }
         ]}
       />

@@ -13,35 +13,15 @@ import React from "react";
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
-function createData(
-    name: string,
-    calories: number,
-    fat: number,
-    carbs: number,
-    protein: number,
-    price: number,
-) {
-    return {
-        name,
-        calories,
-        fat,
-        carbs,
-        protein,
-        price,
-        history: [
-            {
-                date: '2020-01-05',
-                customerId: '11091700',
-                amount: 3,
-            },
-            {
-                date: '2020-01-02',
-                customerId: 'Anonymous',
-                amount: 1,
-            },
-        ],
-    };
+interface TableColumn<T extends string> {
+    key: T;
+    displayName: string | React.ReactNode;
+    align?: 'inherit' | 'left' | 'center' | 'right' | 'justify';
 }
+
+type TableRowKey<T extends string, U extends TableColumn<T>[]> = U[number]["key"]
+
+type TableRow<T extends string> = Record<TableRowKey<T, TableColumn<T>[]>, string | number | undefined | null>
 
 function Row<T extends string>({ columns, row }: { columns: TableColumn<T>[], row: TableRow<T> }) {
     const [open, setOpen] = React.useState(false);
@@ -58,19 +38,14 @@ function Row<T extends string>({ columns, row }: { columns: TableColumn<T>[], ro
                         {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
                 </TableCell>
-                {columns.map(column => (
-                    <TableCell component="th" scope="row">
+                {columns.map((column, i) => (
+                    <TableCell align={column.align} component="td" scope="row">
                         {row[column.key]}
                     </TableCell>
                 ))}
-
-                {/* <TableCell align="right">{row.calories}</TableCell> */}
-                {/* <TableCell align="right">{row.fat}</TableCell>
-                <TableCell align="right">{row.carbs}</TableCell>
-                <TableCell align="right">{row.protein}</TableCell> */}
             </TableRow>
             <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                {/* <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 1 }}>
                             <Typography variant="h6" gutterBottom component="div">
@@ -86,7 +61,7 @@ function Row<T extends string>({ columns, row }: { columns: TableColumn<T>[], ro
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {/* {row.history.map((historyRow) => (
+                                    {row.history.map((historyRow) => (
                                         <TableRow key={historyRow.date}>
                                             <TableCell component="th" scope="row">
                                                 {historyRow.date}
@@ -97,25 +72,16 @@ function Row<T extends string>({ columns, row }: { columns: TableColumn<T>[], ro
                                                 {Math.round(historyRow.amount * row.price * 100) / 100}
                                             </TableCell>
                                         </TableRow>
-                                    ))} */}
+                                    ))}
                                 </TableBody>
                             </Table>
                         </Box>
                     </Collapse>
-                </TableCell>
+                </TableCell> */}
             </TableRow>
         </React.Fragment>
     );
 }
-
-interface TableColumn<T extends string> {
-    key: T;
-    displayName: string | React.ReactNode;
-}
-
-type TableRowKey<T extends string, U extends TableColumn<T>[]> = U[number]["key"]
-
-type TableRow<T extends string> = Record<TableRowKey<T, TableColumn<T>[]>, string | number | undefined | null>
 
 function ExpandableTable<T extends string>({ columns, rows }: { columns: TableColumn<T>[], rows: TableRow<T>[] }) {
     return (
@@ -125,7 +91,7 @@ function ExpandableTable<T extends string>({ columns, rows }: { columns: TableCo
                     <TableRow>
                         <TableCell />
                         {columns.map(
-                            column => (<TableCell>{column.displayName}</TableCell>)
+                            column => (<TableCell align={column.align}>{column.displayName}</TableCell>)
                         )}
                     </TableRow>
                 </TableHead>
