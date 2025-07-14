@@ -9,80 +9,107 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import React from "react";
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
 interface ColumnDefinition<T extends string> {
-    key: T;
-    displayName: string | React.ReactNode;
-    align?: 'inherit' | 'left' | 'center' | 'right' | 'justify';
+  key: T;
+  displayName: string | React.ReactNode;
+  align?: "inherit" | "left" | "center" | "right" | "justify";
 }
 
-type ColumnKey<T extends string, U extends ColumnDefinition<T>[]> = U[number]["key"]
+type ColumnKey<
+  T extends string,
+  U extends ColumnDefinition<T>[],
+> = U[number]["key"];
 
-type RowValues<T extends string> = Record<ColumnKey<T, ColumnDefinition<T>[]>, string | number | undefined | null>
+type RowValues<T extends string> = Record<
+  ColumnKey<T, ColumnDefinition<T>[]>,
+  string | number | undefined | null
+>;
 
 interface RowDefinition<T extends string> {
-    key: string;
-    rowValues: RowValues<T>;
-    expandablePanel: React.ReactNode;
+  key: string;
+  rowValues: RowValues<T>;
+  expandablePanel: React.ReactNode;
 }
 
-function Row<T extends string>({ columns, row }: { columns: ColumnDefinition<T>[], row: RowDefinition<T> }) {
-    const [open, setOpen] = React.useState(false);
+function Row<T extends string>({
+  columns,
+  row,
+}: {
+  columns: ColumnDefinition<T>[];
+  row: RowDefinition<T>;
+}) {
+  const [open, setOpen] = React.useState(false);
 
-    return (
-        <React.Fragment>
-            <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-                <TableCell>
-                    <IconButton
-                        aria-label="expand row"
-                        size="small"
-                        onClick={() => setOpen(!open)}
-                    >
-                        {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                    </IconButton>
-                </TableCell>
-                {columns.map(column => (
-                    <TableCell key={`${column.key}-${row.key}`} align={column.align} component="td" scope="row">
-                        {row.rowValues[column.key]}
-                    </TableCell>
-                ))}
-            </TableRow>
-            <TableRow>
-                {/* Disable the border when the panel is not open to stop stacking borders */}
-                <TableCell sx={!open ? { border: "none" } : {}} style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box sx={{ margin: 1 }}>
-                            {row.expandablePanel}
-                        </Box>
-                    </Collapse>
-                </TableCell>
-            </TableRow>
-        </React.Fragment>
-    );
+  return (
+    <React.Fragment>
+      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
+        <TableCell>
+          <IconButton
+            aria-label="expand row"
+            size="small"
+            onClick={() => setOpen(!open)}
+          >
+            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+          </IconButton>
+        </TableCell>
+        {columns.map((column) => (
+          <TableCell
+            key={`${column.key}-${row.key}`}
+            align={column.align}
+            component="td"
+            scope="row"
+          >
+            {row.rowValues[column.key]}
+          </TableCell>
+        ))}
+      </TableRow>
+      <TableRow>
+        {/* Disable the border when the panel is not open to stop stacking borders */}
+        <TableCell
+          sx={!open ? { border: "none" } : {}}
+          style={{ paddingBottom: 0, paddingTop: 0 }}
+          colSpan={6}
+        >
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <Box sx={{ margin: 1 }}>{row.expandablePanel}</Box>
+          </Collapse>
+        </TableCell>
+      </TableRow>
+    </React.Fragment>
+  );
 }
 
-function ExpandableTable<T extends string>({ columns, rows }: { columns: ColumnDefinition<T>[], rows: RowDefinition<T>[] }) {
-    return (
-        <TableContainer component={Paper}>
-            <Table aria-label="collapsible table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell />
-                        {columns.map(
-                            column => (<TableCell key={column.key} align={column.align}>{column.displayName}</TableCell>)
-                        )}
-                    </TableRow>
-                </TableHead>
-                <TableBody>
-                    {rows.map((row) => (
-                        <Row key={row.key} columns={columns} row={row} />
-                    ))}
-                </TableBody>
-            </Table>
-        </TableContainer>
-    );
+function ExpandableTable<T extends string>({
+  columns,
+  rows,
+}: {
+  columns: ColumnDefinition<T>[];
+  rows: RowDefinition<T>[];
+}) {
+  return (
+    <TableContainer component={Paper}>
+      <Table aria-label="collapsible table">
+        <TableHead>
+          <TableRow>
+            <TableCell />
+            {columns.map((column) => (
+              <TableCell key={column.key} align={column.align}>
+                {column.displayName}
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {rows.map((row) => (
+            <Row key={row.key} columns={columns} row={row} />
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  );
 }
 
 export default ExpandableTable;

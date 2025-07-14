@@ -1,0 +1,9 @@
+# Ignore artifacts:
+dist/
+
+# Ignore all rust/tauri files
+src-tauri/
+**/*.rs
+
+# Tanstack generated
+**/routeTree.gen.ts
