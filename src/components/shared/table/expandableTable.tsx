@@ -49,7 +49,8 @@ function Row<T extends string>({ columns, rowValues, expandedPanel }: { columns:
                 ))}
             </TableRow>
             <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                {/* Disable the border when the panel is not open to stop stacking borders */}
+                <TableCell sx={!open ? { border: "none" } : {}} style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 1 }}>
                             {expandedPanel}
