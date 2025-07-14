@@ -43,7 +43,7 @@ function createData(
     };
 }
 
-function Row({ columns, row }: { columns: TableColumn[], row: TableRow<typeof columns> }) {
+function Row<T extends string>({ columns, row }: { columns: TableColumn<T>[], row: TableRow<T> }) {
     const [open, setOpen] = React.useState(false);
 
     return (
@@ -60,7 +60,7 @@ function Row({ columns, row }: { columns: TableColumn[], row: TableRow<typeof co
                 </TableCell>
                 {columns.map(column => (
                     <TableCell component="th" scope="row">
-                        {row[column.name]}
+                        {row[column.key]}
                     </TableCell>
                 ))}
 
@@ -107,25 +107,17 @@ function Row({ columns, row }: { columns: TableColumn[], row: TableRow<typeof co
         </React.Fragment>
     );
 }
-const rows = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0, 3.99),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3, 4.99),
-    createData('Eclair', 262, 16.0, 24, 6.0, 3.79),
-    createData('Cupcake', 305, 3.7, 67, 4.3, 2.5),
-    createData('Gingerbread', 356, 16.0, 49, 3.9, 1.5),
-];
 
-
-interface TableColumn {
-    name: string;
-    displayName?: string | React.ReactNode;
+interface TableColumn<T extends string> {
+    key: T;
+    displayName: string | React.ReactNode;
 }
 
-type TableRowKey<T extends TableColumn[]> = T[number]["name"]
+type TableRowKey<T extends string, U extends TableColumn<T>[]> = U[number]["key"]
 
-type TableRow<T extends TableColumn[]> = Record<TableRowKey<T>, string | number | undefined | null>
+type TableRow<T extends string> = Record<TableRowKey<T, TableColumn<T>[]>, string | number | undefined | null>
 
-function ExpandableTable({ columns, rows }: { columns: TableColumn[], rows: TableRow<typeof columns>[] }) {
+function ExpandableTable<T extends string>({ columns, rows }: { columns: TableColumn<T>[], rows: TableRow<T>[] }) {
     return (
         <TableContainer component={Paper}>
             <Table aria-label="collapsible table">
@@ -133,7 +125,7 @@ function ExpandableTable({ columns, rows }: { columns: TableColumn[], rows: Tabl
                     <TableRow>
                         <TableCell />
                         {columns.map(
-                            column => (<TableCell>{column.displayName ?? column.name}</TableCell>)
+                            column => (<TableCell>{column.displayName}</TableCell>)
                         )}
                     </TableRow>
                 </TableHead>
