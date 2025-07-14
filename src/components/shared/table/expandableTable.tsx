@@ -11,12 +11,14 @@ import TableRow from "@mui/material/TableRow";
 import React from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { useBreakpoints } from "../../../hooks/useBreakpoints";
 
 interface Width {
   xs?: string;
   sm?: string;
   md?: string;
   lg?: string;
+  xl?: string;
 }
 
 interface ColumnDefinition<T extends string> {
@@ -27,7 +29,7 @@ interface ColumnDefinition<T extends string> {
   minWidth?: string;
 }
 
-type ColumnKey<T extends readonly ColumnDefinition<string>[]> = T[number]["key"];
+type ColumnKey<T extends ColumnDefinition<string>[]> = T[number]["key"];
 
 // Record containg the values for the row, where keys are column names and values are
 // the corresponding value
@@ -40,6 +42,14 @@ interface RowDefinition<T extends string> {
   key: string;
   rowValues: RowValues<T>;
   expandablePanel: React.ReactNode;
+}
+
+interface ColumnsToHideAtBreakpoint<T extends ColumnDefinition<string>[]> {
+  xs?: ColumnKey<T>[];
+  sm?: ColumnKey<T>[];
+  md?: ColumnKey<T>[];
+  lg?: ColumnKey<T>[];
+  xl?: ColumnKey<T>[];
 }
 
 const EXPAND_BUTTON_WIDTH = 60;
@@ -95,24 +105,40 @@ function Row<T extends string>({
 
 function ExpandableTable<T extends string>({
   columns,
+  columnsToHide,
   rows,
 }: {
   columns: ColumnDefinition<T>[];
   rows: RowDefinition<T>[];
+  columnsToHide?: ColumnsToHideAtBreakpoint<ColumnDefinition<T>[]>;
 }) {
+  const { isXs, isSm, isMd, isLg, isXl } = useBreakpoints();
+
+
+  const columnsToShow = columns.filter(column =>
+  (
+    (!isXl || !columnsToHide?.xl?.includes(column.key)) &&
+    (!isLg || !columnsToHide?.lg?.includes(column.key)) &&
+    (!isMd || !columnsToHide?.md?.includes(column.key)) &&
+    (!isSm || !columnsToHide?.sm?.includes(column.key)) &&
+    (!isXs || !columnsToHide?.xs?.includes(column.key))
+  )
+  );
+
   return (
     <TableContainer component={Paper}>
       <Table aria-label="collapsible table" sx={{ tableLayout: "fixed" }}>
         <TableHead>
           <TableRow>
             <TableCell sx={{ width: `${EXPAND_BUTTON_WIDTH}px` }} />
-            {columns.map((column) => (
+            {columnsToShow.map((column) => (
               <TableCell key={column.key} align={column.align} sx={{
                 width: {
                   xs: column.width?.xs,
                   sm: column.width?.sm,
                   md: column.width?.md,
                   lg: column.width?.lg,
+                  xl: column.width?.xl,
                 },
                 overflow: "hidden", textOverflow: "ellipsis"
               }}>
@@ -123,7 +149,7 @@ function ExpandableTable<T extends string>({
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <Row key={row.key} columns={columns} row={row} />
+            <Row key={row.key} columns={columnsToShow} row={row} />
           ))}
         </TableBody>
       </Table>
