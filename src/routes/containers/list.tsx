@@ -31,11 +31,11 @@ function RouteComponent() {
       {containers && (
         <ExpandableTable
           columns={[
-            { key: "name", displayName: "Name" },
-            { key: "id", displayName: "Id", width: "150px" },
-            { key: "image", displayName: "Image", width: "110px" },
-            { key: "state", displayName: "State", width: "110px" },
-            { key: "status", displayName: "Status", width: "200px" },
+            { key: "name", displayName: "Name", width: { xs: "150px", sm: "200px", md: "100%" } },
+            { key: "id", displayName: "Id", width: { xs: "80px", sm: "80px" } },
+            { key: "image", displayName: "Image", width: { xs: "110px", md: "150px" } },
+            { key: "state", displayName: "State", width: { xs: "110px" } },
+            { key: "status", displayName: "Status", width: { xs: "110px", sm: "200px" } },
           ]}
           rows={containers.map((container) => ({
             key: container.key,

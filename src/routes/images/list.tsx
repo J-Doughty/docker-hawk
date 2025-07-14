@@ -35,10 +35,10 @@ function RouteComponent() {
       {images && (
         <ExpandableTable
           columns={[
-            { key: "name", displayName: "Name" },
-            { key: "size", displayName: "Size", width: "110px" },
-            { key: "numContainers", displayName: "No. containers", width: "110px" },
-            { key: "createdAt", displayName: "Created date", width: "110px" },
+            { key: "name", displayName: "Name", width: { xs: "120px", sm: "100%" } },
+            { key: "size", displayName: "Size", width: { xs: "110px", sm: "110px", md: "150px", lg: "220px" } },
+            { key: "numContainers", displayName: "Containers", width: { xs: "50%", sm: "110px", md: "150px", lg: "150px" } },
+            { key: "createdAt", displayName: "Created date", width: { xs: "50%", sm: "110px", md: "150px", lg: "220px" } },
           ]}
           rows={images.map((image) => ({
             key: image.Id,

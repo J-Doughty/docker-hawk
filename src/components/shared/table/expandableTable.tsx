@@ -12,11 +12,18 @@ import React from "react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
+interface Width {
+  xs?: string;
+  sm?: string;
+  md?: string;
+  lg?: string;
+}
+
 interface ColumnDefinition<T extends string> {
   key: T;
   displayName: string | React.ReactNode;
   align?: "inherit" | "left" | "center" | "right" | "justify";
-  width?: string;
+  width?: Width;
   minWidth?: string;
 }
 
@@ -103,9 +110,15 @@ function ExpandableTable<T extends string>({
           <TableRow>
             <TableCell sx={{ width: `${EXPAND_BUTTON_WIDTH}px` }} />
             {columns.map((column) => (
-              // If no width is provided set it to 100% so the columns fill the
-              // remaining space
-              <TableCell key={column.key} align={column.align} sx={{ width: column.width ?? "100%" }}>
+              <TableCell key={column.key} align={column.align} sx={{
+                width: {
+                  xs: column.width?.xs,
+                  sm: column.width?.sm,
+                  md: column.width?.md,
+                  lg: column.width?.lg,
+                },
+                overflow: "hidden", textOverflow: "ellipsis"
+              }}>
                 {column.displayName}
               </TableCell>
             ))}
