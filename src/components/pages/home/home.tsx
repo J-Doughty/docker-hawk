@@ -17,6 +17,8 @@ function App() {
             backgroundAttachment: "fixed",
             backgroundPosition: "center",
             backgroundSize: "contain",
+            // backgroundPosition: "top left",
+            // backgroundSize: "100% auto",
         }}>
             <Container className="flex-grow flex-column home-container" >
                 <h1>Docker Hawk</h1>
