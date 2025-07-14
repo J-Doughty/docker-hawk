@@ -32,10 +32,10 @@ function RouteComponent() {
         <ExpandableTable
           columns={[
             { key: "name", displayName: "Name" },
-            { key: "id", displayName: "Id" },
-            { key: "image", displayName: "Image" },
-            { key: "state", displayName: "State" },
-            { key: "status", displayName: "Status" },
+            { key: "id", displayName: "Id", width: "150px" },
+            { key: "image", displayName: "Image", width: "110px" },
+            { key: "state", displayName: "State", width: "110px" },
+            { key: "status", displayName: "Status", width: "200px" },
           ]}
           rows={containers.map((container) => ({
             key: container.key,

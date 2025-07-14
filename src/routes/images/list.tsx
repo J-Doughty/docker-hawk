@@ -36,9 +36,9 @@ function RouteComponent() {
         <ExpandableTable
           columns={[
             { key: "name", displayName: "Name" },
-            { key: "size", displayName: "Size" },
-            { key: "numContainers", displayName: "No. containers" },
-            { key: "createdAt", displayName: "Created date" },
+            { key: "size", displayName: "Size", width: "110px" },
+            { key: "numContainers", displayName: "No. containers", width: "110px" },
+            { key: "createdAt", displayName: "Created date", width: "110px" },
           ]}
           rows={images.map((image) => ({
             key: image.Id,

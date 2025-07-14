@@ -16,6 +16,8 @@ interface ColumnDefinition<T extends string> {
   key: T;
   displayName: string | React.ReactNode;
   align?: "inherit" | "left" | "center" | "right" | "justify";
+  width?: string;
+  minWidth?: string;
 }
 
 type ColumnKey<
@@ -35,6 +37,8 @@ interface RowDefinition<T extends string> {
   rowValues: RowValues<T>;
   expandablePanel: React.ReactNode;
 }
+
+const EXPAND_BUTTON_WIDTH = 60;
 
 function Row<T extends string>({
   columns,
@@ -63,6 +67,7 @@ function Row<T extends string>({
             align={column.align}
             component="td"
             scope="row"
+            sx={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
           >
             {row.rowValues[column.key]}
           </TableCell>
@@ -93,12 +98,14 @@ function ExpandableTable<T extends string>({
 }) {
   return (
     <TableContainer component={Paper}>
-      <Table aria-label="collapsible table">
+      <Table aria-label="collapsible table" sx={{ tableLayout: "fixed" }}>
         <TableHead>
           <TableRow>
-            <TableCell />
+            <TableCell sx={{ width: `${EXPAND_BUTTON_WIDTH}px` }} />
             {columns.map((column) => (
-              <TableCell key={column.key} align={column.align}>
+              // If no width is provided set it to 100% so the columns fill the
+              // remaining space
+              <TableCell key={column.key} align={column.align} sx={{ width: column.width ?? "100%" }}>
                 {column.displayName}
               </TableCell>
             ))}
