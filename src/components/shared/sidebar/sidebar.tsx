@@ -138,14 +138,14 @@ export default function Sidebar({ children, sidebarLinks }: { children: React.Re
                     </IconButton>
                 </DrawerHeader>
                 {sidebarLinks.map((sideBarSections, i) => (
-                    <>
+                    <React.Fragment key={sideBarSections?.[0].text}>
                         <List>
                             {sideBarSections.map(sidebarItem => (
-                                <SidebarLink sidebarLink={sidebarItem} sidebarExpanded={open} />
+                                <SidebarLink key={sidebarItem.text} sidebarLink={sidebarItem} sidebarExpanded={open} />
                             ))}
                         </List>
                         {i !== sidebarLinks.length - 1 && <Divider />}
-                    </>
+                    </React.Fragment>
                 ))}
             </Drawer>
             <Box component="main"

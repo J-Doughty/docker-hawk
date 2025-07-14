@@ -23,11 +23,12 @@ type ColumnKey<T extends string, U extends ColumnDefinition<T>[]> = U[number]["k
 type RowValues<T extends string> = Record<ColumnKey<T, ColumnDefinition<T>[]>, string | number | undefined | null>
 
 interface RowDefinition<T extends string> {
+    key: string;
     rowValues: RowValues<T>;
     expandablePanel: React.ReactNode;
 }
 
-function Row<T extends string>({ columns, rowValues, expandedPanel }: { columns: ColumnDefinition<T>[], rowValues: RowValues<T>, expandedPanel: React.ReactNode }) {
+function Row<T extends string>({ columns, row }: { columns: ColumnDefinition<T>[], row: RowDefinition<T> }) {
     const [open, setOpen] = React.useState(false);
 
     return (
@@ -43,8 +44,8 @@ function Row<T extends string>({ columns, rowValues, expandedPanel }: { columns:
                     </IconButton>
                 </TableCell>
                 {columns.map(column => (
-                    <TableCell align={column.align} component="td" scope="row">
-                        {rowValues[column.key]}
+                    <TableCell key={`${column.key}-${row.key}`} align={column.align} component="td" scope="row">
+                        {row.rowValues[column.key]}
                     </TableCell>
                 ))}
             </TableRow>
@@ -53,7 +54,7 @@ function Row<T extends string>({ columns, rowValues, expandedPanel }: { columns:
                 <TableCell sx={!open ? { border: "none" } : {}} style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 1 }}>
-                            {expandedPanel}
+                            {row.expandablePanel}
                         </Box>
                     </Collapse>
                 </TableCell>
@@ -70,13 +71,13 @@ function ExpandableTable<T extends string>({ columns, rows }: { columns: ColumnD
                     <TableRow>
                         <TableCell />
                         {columns.map(
-                            column => (<TableCell align={column.align}>{column.displayName}</TableCell>)
+                            column => (<TableCell key={column.key} align={column.align}>{column.displayName}</TableCell>)
                         )}
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {rows.map((row) => (
-                        <Row columns={columns} rowValues={row.rowValues} expandedPanel={row.expandablePanel} />
+                        <Row key={row.key} columns={columns} row={row} />
                     ))}
                 </TableBody>
             </Table>

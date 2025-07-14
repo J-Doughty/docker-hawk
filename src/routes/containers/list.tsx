@@ -8,55 +8,44 @@ export const Route = createFileRoute('/containers/list')({
   component: RouteComponent,
 })
 
+interface DockerContainerSummary extends ContainerSummary {
+  key: string;
+}
+
 function RouteComponent() {
-  const [containers, setContainers] = useState<ContainerSummary[]>();
+  const [containers, setContainers] = useState<DockerContainerSummary[]>();
 
   useEffect(() => {
     invoke<ContainerSummary[]>("list_containers").then(
-      dockerContainers => setContainers(dockerContainers)
+      dockerContainers => setContainers(dockerContainers.map(container => ({ ...container, key: container.Id ?? crypto.randomUUID() })))
     );
   }, [])
 
   return (
     <section>
-      <div>
-        {containers && containers.flatMap(containers => (
-          <p>{containers.Names}</p>
-        ))}
-      </div>
-      <ExpandableTable columns={[
-        { key: "dessert", displayName: "Dessert (100g serving)" },
-        { key: "calories", displayName: "Calories", align: "right" },
-        { key: "fat", displayName: <>Fat&nbsp;(g)</>, align: "right" },
-        { key: "carbs", displayName: <>Carbs&nbsp;(g)</>, align: "right" },
-        { key: "protein", displayName: <>Protein&nbsp;(g)</>, align: "right" },
-        // { key: "price", displayName: <>Price&nbsp;(£)</> },
+      {containers && <ExpandableTable columns={[
+        { key: "name", displayName: "Name" },
+        { key: "id", displayName: "Id" },
+        { key: "image", displayName: "Image" },
+        { key: "state", displayName: "State" },
+        { key: "status", displayName: "Status" },
       ]}
-        rows={[
+        rows={containers.map((container) => (
           {
+            key: container.key,
             rowValues: {
-              dessert: "Frozen yoghurt",
-              calories: 5,
-              fat: 10,
-              carbs: 186,
-              protein: 15,
-              // price: 14.58,
+              name: container.Names?.join(", "),
+              id: container.Id?.slice(0, 11),
+              image: container.Image,
+              state: container.State,
+              status: container.Status,
             },
-            expandablePanel: <>Expanded</>
-          },
-          {
-            rowValues: {
-              dessert: "Frozen yoghurt",
-              calories: 5,
-              fat: 10,
-              carbs: 186,
-              protein: 15,
-              // price: 14.58,
-            },
-            expandablePanel: <>Expanded</>
-          },
-        ]}
-      />
+            expandablePanel: (
+              <>Expanded</>
+            )
+          }
+        ))}
+      />}
     </section>
   )
 }
