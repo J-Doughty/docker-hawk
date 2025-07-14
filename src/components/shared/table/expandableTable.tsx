@@ -81,7 +81,11 @@ function Row<T extends string>({
             align={column.align}
             component="td"
             scope="row"
-            sx={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+            sx={{
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
           >
             {row.rowValues[column.key]}
           </TableCell>
@@ -114,15 +118,13 @@ function ExpandableTable<T extends string>({
 }) {
   const { isXs, isSm, isMd, isLg, isXl } = useBreakpoints();
 
-
-  const columnsToShow = columns.filter(column =>
-  (
-    (!isXl || !columnsToHide?.xl?.includes(column.key)) &&
-    (!isLg || !columnsToHide?.lg?.includes(column.key)) &&
-    (!isMd || !columnsToHide?.md?.includes(column.key)) &&
-    (!isSm || !columnsToHide?.sm?.includes(column.key)) &&
-    (!isXs || !columnsToHide?.xs?.includes(column.key))
-  )
+  const columnsToShow = columns.filter(
+    (column) =>
+      (!isXl || !columnsToHide?.xl?.includes(column.key)) &&
+      (!isLg || !columnsToHide?.lg?.includes(column.key)) &&
+      (!isMd || !columnsToHide?.md?.includes(column.key)) &&
+      (!isSm || !columnsToHide?.sm?.includes(column.key)) &&
+      (!isXs || !columnsToHide?.xs?.includes(column.key)),
   );
 
   return (
@@ -132,16 +134,21 @@ function ExpandableTable<T extends string>({
           <TableRow>
             <TableCell sx={{ width: `${EXPAND_BUTTON_WIDTH}px` }} />
             {columnsToShow.map((column) => (
-              <TableCell key={column.key} align={column.align} sx={{
-                width: {
-                  xs: column.width?.xs,
-                  sm: column.width?.sm,
-                  md: column.width?.md,
-                  lg: column.width?.lg,
-                  xl: column.width?.xl,
-                },
-                overflow: "hidden", textOverflow: "ellipsis"
-              }}>
+              <TableCell
+                key={column.key}
+                align={column.align}
+                sx={{
+                  width: {
+                    xs: column.width?.xs,
+                    sm: column.width?.sm,
+                    md: column.width?.md,
+                    lg: column.width?.lg,
+                    xl: column.width?.xl,
+                  },
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
                 {column.displayName}
               </TableCell>
             ))}

@@ -15,11 +15,11 @@ const getSizeAsString = (numBytes: number) => {
   const numGigaBytes = numBytes / bytesInAGigaByte;
 
   if (numGigaBytes > 1) {
-    return `${numGigaBytes.toFixed(2)} GB`
+    return `${numGigaBytes.toFixed(2)} GB`;
   }
 
-  return `${(numBytes / bytesInAMegaByte).toFixed(2)} MB`
-}
+  return `${(numBytes / bytesInAMegaByte).toFixed(2)} MB`;
+};
 
 function RouteComponent() {
   const [images, setImages] = useState<ImageSummary[]>();
@@ -35,10 +35,26 @@ function RouteComponent() {
       {images && (
         <ExpandableTable
           columns={[
-            { key: "name", displayName: "Name", width: { xs: "120px", sm: "100%" } },
-            { key: "size", displayName: "Size", width: { xs: "110px", sm: "110px", md: "150px", lg: "220px" } },
-            { key: "numContainers", displayName: "Containers", width: { xs: "50%", sm: "110px", md: "150px", lg: "150px" } },
-            { key: "createdAt", displayName: "Created date", width: { xs: "50%", sm: "110px", md: "150px", lg: "220px" } },
+            {
+              key: "name",
+              displayName: "Name",
+              width: { xs: "120px", sm: "100%" },
+            },
+            {
+              key: "size",
+              displayName: "Size",
+              width: { xs: "110px", sm: "110px", md: "150px", lg: "220px" },
+            },
+            {
+              key: "numContainers",
+              displayName: "Containers",
+              width: { xs: "50%", sm: "110px", md: "150px", lg: "150px" },
+            },
+            {
+              key: "createdAt",
+              displayName: "Created date",
+              width: { xs: "50%", sm: "110px", md: "150px", lg: "220px" },
+            },
           ]}
           rows={images.map((image) => ({
             key: image.Id,

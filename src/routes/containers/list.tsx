@@ -31,11 +31,31 @@ function RouteComponent() {
       {containers && (
         <ExpandableTable
           columns={[
-            { key: "name", displayName: "Name", width: { xs: "70%", sm: "50%", md: "100%" } },
-            { key: "id", displayName: "Id", width: { md: "120px", lg: "200px" } },
-            { key: "image", displayName: "Image", width: { xs: "110px", md: "150px", lg: "180px" } },
-            { key: "state", displayName: "State", width: { xs: "30%", sm: "110px" } },
-            { key: "status", displayName: "Status", width: { sm: "50%", md: "230px", lg: "260px" } },
+            {
+              key: "name",
+              displayName: "Name",
+              width: { xs: "70%", sm: "50%", md: "100%" },
+            },
+            {
+              key: "id",
+              displayName: "Id",
+              width: { md: "120px", lg: "200px" },
+            },
+            {
+              key: "image",
+              displayName: "Image",
+              width: { xs: "110px", md: "150px", lg: "180px" },
+            },
+            {
+              key: "state",
+              displayName: "State",
+              width: { xs: "30%", sm: "110px" },
+            },
+            {
+              key: "status",
+              displayName: "Status",
+              width: { sm: "50%", md: "230px", lg: "260px" },
+            },
           ]}
           columnsToHide={{
             xs: ["id", "image", "status"],
