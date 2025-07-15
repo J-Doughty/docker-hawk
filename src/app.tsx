@@ -1,10 +1,11 @@
+import CssBaseline from "@mui/material/CssBaseline";
 import {
   ColorSystemOptions,
   createTheme,
   ThemeProvider,
 } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import { RouterProvider, createRouter } from "@tanstack/react-router";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
+
 import { routeTree } from "./routeTree.gen";
 
 import "./app.css";

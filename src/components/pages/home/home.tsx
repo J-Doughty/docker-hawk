@@ -1,14 +1,15 @@
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
+import { useTheme } from "@mui/material/styles";
+
+import { DarkHawk, LightHawk } from "../../../assets";
+import ThemedLink from "../../shared/themedLink/themedLink";
 
 import "./home.css";
-import { DarkHawk, LightHawk } from "../../../assets";
-import { useTheme } from "@mui/material/styles";
-import ThemedLink from "../../shared/themedLink/themedLink";
 
 function App() {
   const theme = useTheme();
-  const hawkImage = theme.palette.mode == "light" ? LightHawk : DarkHawk;
+  const hawkImage = theme.palette.mode === "light" ? LightHawk : DarkHawk;
 
   return (
     <section
@@ -19,8 +20,8 @@ function App() {
         backgroundAttachment: "fixed",
         backgroundPosition: "center",
         backgroundSize: "contain",
-        // backgroundPosition: "top left",
-        // backgroundSize: "100% auto",
+        /* BackgroundPosition: "top left",
+           backgroundSize: "100% auto", */
       }}
     >
       <Container className="flex-grow flex-column home-container">

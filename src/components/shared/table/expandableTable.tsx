@@ -1,3 +1,7 @@
+import React from "react";
+
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import Box from "@mui/material/Box";
 import Collapse from "@mui/material/Collapse";
 import IconButton from "@mui/material/IconButton";
@@ -8,9 +12,7 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import React from "react";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+
 import { useBreakpoints } from "../../../hooks/useBreakpoints";
 
 interface Width {
@@ -31,8 +33,8 @@ interface ColumnDefinition<T extends string> {
 
 type ColumnKey<T extends ColumnDefinition<string>[]> = T[number]["key"];
 
-// Record containg the values for the row, where keys are column names and values are
-// the corresponding value
+/* Record containg the values for the row, where keys are column names and values are
+   the corresponding value */
 type RowValues<T extends string> = Record<
   ColumnKey<ColumnDefinition<T>[]>,
   string | number | undefined | null

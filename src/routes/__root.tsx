@@ -1,10 +1,12 @@
 import React from "react";
-import { Outlet, createRootRoute } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import Sidebar, { SidebarLink } from "../components/shared/sidebar/sidebar";
-import ListAltIcon from "@mui/icons-material/ListAlt";
-import Inventory2Icon from "@mui/icons-material/Inventory2";
+
 import HomeIcon from "@mui/icons-material/Home";
+import Inventory2Icon from "@mui/icons-material/Inventory2";
+import ListAltIcon from "@mui/icons-material/ListAlt";
+import { createRootRoute, Outlet } from "@tanstack/react-router";
+import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
+
+import Sidebar, { SidebarLink } from "../components/shared/sidebar/sidebar";
 
 export const Route = createRootRoute({
   component: RootComponent,

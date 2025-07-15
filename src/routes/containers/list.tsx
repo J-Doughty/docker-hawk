@@ -1,9 +1,11 @@
+import { useEffect, useState } from "react";
+
 import { createFileRoute } from "@tanstack/react-router";
 import { invoke } from "@tauri-apps/api/core";
-import { useEffect, useState } from "react";
-import { ContainerSummary } from "../../types/tauri/commands/docker/ContainerSummary";
-import ExpandableTable from "../../components/shared/table/expandableTable";
+
 import PrimaryPageLayout from "../../components/shared/layout/primaryPageLayout";
+import ExpandableTable from "../../components/shared/table/expandableTable";
+import { ContainerSummary } from "../../types/tauri/commands/docker/ContainerSummary";
 
 export const Route = createFileRoute("/containers/list")({
   component: RouteComponent,

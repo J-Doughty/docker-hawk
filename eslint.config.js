@@ -1,32 +1,39 @@
-import js from "@eslint/js";
-import globals from "globals";
-import tseslint from "typescript-eslint";
-import pluginReact from "eslint-plugin-react";
 import { defineConfig, globalIgnores } from "eslint/config";
 import eslintConfigPrettier from "eslint-config-prettier";
+import pluginReact from "eslint-plugin-react";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import unusedImports from "eslint-plugin-unused-imports";
+import globals from "globals";
+import tseslint from "typescript-eslint";
 
+import js from "@eslint/js";
 
 export default defineConfig([
-  { files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"], plugins: { js }, extends: ["js/recommended"] },
-  { files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"], languageOptions: { globals: globals.browser } },
-  globalIgnores(["./src-tauri"]),
+  {
+    files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    plugins: { js },
+    extends: ["js/recommended"],
+  },
+  {
+    files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+    languageOptions: { globals: globals.browser },
+  },
+  globalIgnores(["./src-tauri", "./dist", "./node_modules", ".tanstack"]),
   tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
   eslintConfigPrettier,
   {
     settings: {
-      "react": {
-        "version": "detect"
-      }
-    }
+      react: {
+        version: "detect",
+      },
+    },
   },
   {
     plugins: {
       "unused-imports": unusedImports,
       "simple-import-sort": simpleImportSort,
-    }
+    },
   },
   {
     rules: {
@@ -35,14 +42,14 @@ export default defineConfig([
       "no-self-compare": 2,
       "no-unreachable-loop": 1,
       "no-unused-private-class-members": 1,
-      "camelcase": 1,
+      camelcase: 1,
       "capitalized-comments": 1,
-      "curly": 1,
+      curly: 1,
       "default-case": 1,
       "default-case-last": 1,
       "default-param-last": 2,
       "dot-notation": 1,
-      "eqeqeq": 2,
+      eqeqeq: 2,
       "guard-for-in": 2,
       "multiline-comment-style": [1, "bare-block"],
       "no-confusing-arrow": 2,
@@ -63,13 +70,13 @@ export default defineConfig([
       "prefer-spread": 1,
       "prefer-template": 1,
       "quote-props": [1, "as-needed"],
-      "radix": 2,
+      radix: 2,
       "require-await": 2,
       "simple-import-sort/exports": 1,
       "simple-import-sort/imports": [
         1,
         {
-          "groups": [
+          groups: [
             // `react` first, then packages starting with a character
             ["^react$", "^[a-z]"],
             // Packages starting with `@`
@@ -81,11 +88,11 @@ export default defineConfig([
             // Imports starting with `./`
             ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
             // Style imports
-            ["^.+\\.s?css$"]
-          ]
-        }
+            ["^.+\\.s?css$"],
+          ],
+        },
       ],
-      "unused-imports/no-unused-imports": 1
-    }
-  }
+      "unused-imports/no-unused-imports": 1,
+    },
+  },
 ]);

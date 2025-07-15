@@ -1,6 +1,7 @@
-import { Link } from "@tanstack/react-router";
-import { FileRoutesByTo } from "../../../routeTree.gen";
 import { useTheme } from "@mui/material/styles";
+import { Link } from "@tanstack/react-router";
+
+import { FileRoutesByTo } from "../../../routeTree.gen";
 
 interface ThemedLinkProps {
   to: keyof FileRoutesByTo;
