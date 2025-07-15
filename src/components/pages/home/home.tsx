@@ -20,8 +20,6 @@ function App() {
         backgroundAttachment: "fixed",
         backgroundPosition: "center",
         backgroundSize: "contain",
-        /* BackgroundPosition: "top left",
-           backgroundSize: "100% auto", */
       }}
     >
       <Container className="flex-grow flex-column home-container">

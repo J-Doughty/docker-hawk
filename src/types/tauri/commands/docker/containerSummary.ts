@@ -33,7 +33,7 @@ export interface ContainerSummary {
   State?: ContainerSummaryStateEnum;
   Status?: string;
   HostConfig?: ContainerSummaryHostConfig;
-  /* Pub image_manifest_descriptor: Option<OciDescriptor>,
-     pub network_settings: Option<ContainerSummaryNetworkSettings>,
-     pub mounts: Option<Vec<MountPoint>>, */
+  // Pub image_manifest_descriptor: Option<OciDescriptor>,
+  // Pub network_settings: Option<ContainerSummaryNetworkSettings>,
+  // Pub mounts: Option<Vec<MountPoint>>,
 }

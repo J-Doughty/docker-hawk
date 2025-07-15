@@ -33,8 +33,8 @@ interface ColumnDefinition<T extends string> {
 
 type ColumnKey<T extends ColumnDefinition<string>[]> = T[number]["key"];
 
-/* Record containg the values for the row, where keys are column names and values are
-   the corresponding value */
+// Record containg the values for the row, where keys are column names and values are
+// the corresponding value
 type RowValues<T extends string> = Record<
   ColumnKey<ColumnDefinition<T>[]>,
   string | number | undefined | null

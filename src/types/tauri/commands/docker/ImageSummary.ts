@@ -12,6 +12,6 @@ export interface ImageSummary {
   VirtualSize?: number;
   Labels: Record<string, string>;
   Containers: number;
-  /* Manifests: Option<Vec<ImageManifestSummary>>;
-     descriptor: Option<OciDescriptor>; */
+  // Manifests: Option<Vec<ImageManifestSummary>>;
+  // Descriptor: Option<OciDescriptor>;
 }
