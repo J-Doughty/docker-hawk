@@ -82,9 +82,15 @@ function Row<T extends string>({
             component="td"
             scope="row"
             sx={{
+              width: {
+                xs: column.width?.xs,
+                sm: column.width?.sm,
+                md: column.width?.md,
+                lg: column.width?.lg,
+                xl: column.width?.xl,
+              },
               overflow: "hidden",
               textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
             }}
           >
             {row.rowValues[column.key]}
@@ -129,7 +135,7 @@ function ExpandableTable<T extends string>({
 
   return (
     <TableContainer component={Paper}>
-      <Table aria-label="collapsible table" sx={{ tableLayout: "fixed" }}>
+      <Table aria-label="collapsible table" sx={{ width: "100%" }}>
         <TableHead>
           <TableRow>
             <TableCell sx={{ width: `${EXPAND_BUTTON_WIDTH}px` }} />
