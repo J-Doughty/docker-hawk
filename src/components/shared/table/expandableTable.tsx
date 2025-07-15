@@ -54,6 +54,14 @@ interface ColumnsToHideAtBreakpoint<T extends ColumnDefinition<string>[]> {
 
 const EXPAND_BUTTON_WIDTH = 60;
 
+const getColumnWidth = <T extends string,>(column: ColumnDefinition<T>) => ({
+  xs: column.width?.xs,
+  sm: column.width?.sm,
+  md: column.width?.md,
+  lg: column.width?.lg,
+  xl: column.width?.xl,
+});
+
 function Row<T extends string>({
   columns,
   row,
@@ -82,15 +90,7 @@ function Row<T extends string>({
             component="td"
             scope="row"
             sx={{
-              width: {
-                xs: column.width?.xs,
-                sm: column.width?.sm,
-                md: column.width?.md,
-                lg: column.width?.lg,
-                xl: column.width?.xl,
-              },
-              overflow: "hidden",
-              textOverflow: "ellipsis",
+              width: getColumnWidth(column),
             }}
           >
             {row.rowValues[column.key]}
@@ -144,15 +144,7 @@ function ExpandableTable<T extends string>({
                 key={column.key}
                 align={column.align}
                 sx={{
-                  width: {
-                    xs: column.width?.xs,
-                    sm: column.width?.sm,
-                    md: column.width?.md,
-                    lg: column.width?.lg,
-                    xl: column.width?.xl,
-                  },
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
+                  width: getColumnWidth(column),
                 }}
               >
                 {column.displayName}

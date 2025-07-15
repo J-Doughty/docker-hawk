@@ -49,7 +49,7 @@ function RouteComponent() {
             {
               key: "state",
               displayName: "State",
-              width: { xs: "30%", sm: "25%" },
+              width: { xs: "30%", sm: "25%", md: "100px" },
             },
             {
               key: "status",

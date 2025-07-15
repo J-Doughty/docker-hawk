@@ -38,24 +38,27 @@ function RouteComponent() {
             {
               key: "name",
               displayName: "Name",
-              width: { xs: "120px", sm: "100%" },
+              width: { xs: "120px", sm: "50%" },
             },
             {
               key: "size",
               displayName: "Size",
-              width: { xs: "110px", sm: "110px", md: "150px", lg: "220px" },
+              width: { sm: "110px", md: "180px", lg: "220px" },
             },
             {
               key: "numContainers",
               displayName: "Containers",
-              width: { xs: "50%", sm: "110px", md: "150px", lg: "150px" },
+              width: { sm: "110px", md: "180px", lg: "180px" },
             },
             {
               key: "createdAt",
               displayName: "Created date",
-              width: { xs: "50%", sm: "110px", md: "150px", lg: "220px" },
+              width: { xs: "25%", sm: "110px", md: "180px", lg: "220px" },
             },
           ]}
+          columnsToHide={{
+            xs: ["size", "numContainers"]
+          }}
           rows={images.map((image) => ({
             key: image.Id,
             rowValues: {
