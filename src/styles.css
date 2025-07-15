@@ -16,6 +16,14 @@
   height: 100%;
 }
 
+.w-100 {
+  width: 100%;
+}
+
+.text-center {
+  text-align: center;
+}
+
 .min-vh-100 {
   min-height: 100vh;
 }

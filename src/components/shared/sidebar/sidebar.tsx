@@ -20,7 +20,7 @@ export interface SidebarLink {
   icon?: React.ReactNode;
 }
 
-const drawerWidth = 240;
+const drawerWidth = 180;
 
 const openedMixin = (theme: Theme): CSSObject => ({
   width: drawerWidth,

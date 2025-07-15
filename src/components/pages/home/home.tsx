@@ -24,7 +24,7 @@ function App() {
       }}
     >
       <Container className="flex-grow flex-column home-container">
-        <h1>Docker Hawk</h1>
+        <h1 className="text-center">Docker Hawk</h1>
         <Box>
           <p>
             To start using Docker Hawk visit your{" "}

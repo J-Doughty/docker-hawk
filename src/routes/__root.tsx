@@ -6,8 +6,6 @@ import ListAltIcon from "@mui/icons-material/ListAlt";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
 import HomeIcon from "@mui/icons-material/Home";
 
-import "./root.css";
-
 export const Route = createRootRoute({
   component: RootComponent,
 });
@@ -25,7 +23,7 @@ function RootComponent() {
     <React.Fragment>
       <div className="min-vh-100 flex-column">
         <Sidebar sidebarLinks={sidebarLinks}>
-          <main className="main-container flex-column flex-grow">
+          <main className="flex-column flex-grow">
             <Outlet />
           </main>
         </Sidebar>

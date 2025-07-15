@@ -54,7 +54,7 @@ interface ColumnsToHideAtBreakpoint<T extends ColumnDefinition<string>[]> {
 
 const EXPAND_BUTTON_WIDTH = 60;
 
-const getColumnWidth = <T extends string,>(column: ColumnDefinition<T>) => ({
+const getColumnWidth = <T extends string>(column: ColumnDefinition<T>) => ({
   xs: column.width?.xs,
   sm: column.width?.sm,
   md: column.width?.md,
