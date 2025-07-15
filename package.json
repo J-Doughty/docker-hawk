@@ -13,7 +13,8 @@
     "tauri:install": "sudo dpkg -i ./src-tauri/target/release/bundle/deb/tauri-app_0.1.0_amd64.deb",
     "tauri:uninstall": "sudo apt remove tauri-app",
     "prettier:check": "prettier . --check",
-    "prettier:fix": "prettier . --write"
+    "prettier:fix": "prettier . --write",
+    "fix": "npm run prettier:fix"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

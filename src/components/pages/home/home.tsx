@@ -1,10 +1,10 @@
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import { Link } from "@tanstack/react-router";
 
 import "./home.css";
 import { DarkHawk, LightHawk } from "../../../assets";
 import { useTheme } from "@mui/material/styles";
+import ThemedLink from "../../shared/themedLink/themedLink";
 
 function App() {
   const theme = useTheme();
@@ -28,8 +28,8 @@ function App() {
         <Box>
           <p>
             To start using Docker Hawk visit your{" "}
-            <Link to="/containers/list">Containers</Link> or view your{" "}
-            <Link to="/images/list">Images</Link>
+            <ThemedLink to="/containers/list">Containers</ThemedLink> or view
+            your <ThemedLink to="/images/list">Images</ThemedLink>
           </p>
         </Box>
       </Container>

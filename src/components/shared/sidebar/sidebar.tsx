@@ -11,8 +11,8 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { Link } from "@tanstack/react-router";
 import { FileRoutesByTo } from "../../../routeTree.gen";
+import ThemedLink from "../themedLink/themedLink";
 
 export interface SidebarLink {
   text: string;
@@ -87,7 +87,7 @@ function SidebarLink({
   sidebarExpanded: boolean;
 }) {
   return (
-    <Link to={sidebarLink.link}>
+    <ThemedLink to={sidebarLink.link}>
       <ListItem key={sidebarLink.text} disablePadding sx={{ display: "block" }}>
         <ListItemButton
           sx={[
@@ -117,7 +117,7 @@ function SidebarLink({
           />
         </ListItemButton>
       </ListItem>
-    </Link>
+    </ThemedLink>
   );
 }
 
