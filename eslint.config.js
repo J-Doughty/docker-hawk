@@ -69,7 +69,6 @@ export default defineConfig([
       "prefer-object-spread": 1,
       "prefer-spread": 1,
       "prefer-template": 1,
-      "quote-props": [1, "as-needed"],
       radix: 2,
       "require-await": 2,
       "simple-import-sort/exports": 1,
