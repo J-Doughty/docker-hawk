@@ -62,6 +62,10 @@ function RouteComponent() {
                 flex: 1,
               },
             ]}
+            columnsToHide={{
+              xs: ["image", "state"],
+              sm: ["image", "state"]
+            }}
             rows={containers.map((container) => ({
               id: container.key,
               name: container.Names?.join(", "),
