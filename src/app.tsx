@@ -29,6 +29,13 @@ const lightPalette: ColorSystemOptions = {
       main: "#f50057",
     },
   },
+  custom: {
+    scrollbar: {
+      track: "#f1f1f1",
+      thumb: "#c1c1c1",
+      thumbSelected: "#a8a8a8"
+    }
+  }
 };
 
 const darkPalette: ColorSystemOptions = {
@@ -41,6 +48,13 @@ const darkPalette: ColorSystemOptions = {
       main: "#f50057",
     },
   },
+  custom: {
+    scrollbar: {
+      track: "#2b2b2b",
+      thumb: "#6b6b6b",
+      thumbSelected: "#959595",
+    }
+  }
 };
 
 const theme = createTheme({
@@ -48,6 +62,42 @@ const theme = createTheme({
     dark: darkPalette,
     light: lightPalette,
   },
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: (theme) => {
+        const track = theme.colorSchemes[theme.palette.mode]?.custom.scrollbar.track;
+        const thumb = theme.colorSchemes[theme.palette.mode]?.custom.scrollbar.thumb;
+        const thumbSelected = theme.colorSchemes[theme.palette.mode]?.custom.scrollbar.thumbSelected;
+
+        return {
+          body: {
+            scrollbarColor: `${thumb} ${track}`,
+            "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
+              backgroundColor: track,
+            },
+            "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
+              borderRadius: 8,
+              backgroundColor: thumb,
+              minHeight: 24,
+              border: "3px solid " + track,
+            },
+            "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus": {
+              backgroundColor: thumbSelected,
+            },
+            "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active": {
+              backgroundColor: thumbSelected,
+            },
+            "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover": {
+              backgroundColor: thumbSelected,
+            },
+            "&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner": {
+              backgroundColor: thumb,
+            },
+          },
+        }
+      },
+    },
+  }
 });
 
 function App() {

@@ -1,4 +1,5 @@
 
+import { styled } from "@mui/material/styles";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 // These types were created partially from https://github.com/mui/mui-x/issues/4623
