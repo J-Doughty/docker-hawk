@@ -95,6 +95,8 @@ export default defineConfig([
           ],
         },
       ],
+      // No no-unused-expressions detects this but it cannot auto fix it so we add this
+      // rule
       "unused-imports/no-unused-imports": 1,
     },
   },
