@@ -39,22 +39,27 @@ function RouteComponent() {
               {
                 field: "name",
                 headerName: "Name",
+                flex: 1,
               },
               {
                 field: "containerId",
                 headerName: "Id",
+                flex: 1,
               },
               {
                 field: "image",
                 headerName: "Image",
+                flex: 1,
               },
               {
                 field: "state",
                 headerName: "State",
+                flex: 0.5,
               },
               {
                 field: "status",
                 headerName: "Status",
+                flex: 1,
               },
             ]}
             rows={containers.map((container) => ({

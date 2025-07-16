@@ -43,18 +43,22 @@ function RouteComponent() {
               {
                 field: "name",
                 headerName: "Name",
+                flex: 2,
               },
               {
                 field: "size",
                 headerName: "Size",
+                flex: 1,
               },
               {
                 field: "numContainers",
                 headerName: "Containers",
+                flex: 0.5,
               },
               {
                 field: "createdAt",
                 headerName: "Created date",
+                flex: 1,
               },
             ]}
             rows={images.map((image) => ({

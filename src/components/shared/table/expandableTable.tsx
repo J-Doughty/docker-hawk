@@ -7,7 +7,9 @@ type ColumnDefinition<T extends string> = GridColDef & { field: T };
 type RowDefinition<T extends string> = Record<
   T,
   string | number | null | undefined
-> & { id: number };
+> & {
+  id: number;
+};
 
 function ExpandableTable<T extends string>({
   columns,
@@ -20,15 +22,9 @@ function ExpandableTable<T extends string>({
     <div style={{ maxHeight: "100%", width: "100%" }}>
       <DataGrid
         rows={rows}
-        columns={columns.map((col) => ({ ...col, flex: 1 }))}
+        columns={columns}
         hideFooter
-        // AutosizeOptions={{
-        //   includeOutliers: true,
-        //   includeHeaders: false,
-        //   expand: true,
-        // }}
-        //   autosizeOnMount
-        // density="compact"
+      // density="compact"
       />
     </div>
   );
