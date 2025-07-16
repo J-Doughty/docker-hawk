@@ -33,9 +33,9 @@ const lightPalette: ColorSystemOptions = {
     scrollbar: {
       track: "#f1f1f1",
       thumb: "#c1c1c1",
-      thumbSelected: "#a8a8a8"
-    }
-  }
+      thumbSelected: "#a8a8a8",
+    },
+  },
 };
 
 const darkPalette: ColorSystemOptions = {
@@ -53,11 +53,11 @@ const darkPalette: ColorSystemOptions = {
       track: "#2b2b2b",
       thumb: "#6b6b6b",
       thumbSelected: "#959595",
-    }
-  }
+    },
+  },
 };
 
-const theme = createTheme({
+const appTheme = createTheme({
   colorSchemes: {
     dark: darkPalette,
     light: lightPalette,
@@ -65,9 +65,13 @@ const theme = createTheme({
   components: {
     MuiCssBaseline: {
       styleOverrides: (theme) => {
-        const track = theme.colorSchemes[theme.palette.mode]?.custom.scrollbar.track;
-        const thumb = theme.colorSchemes[theme.palette.mode]?.custom.scrollbar.thumb;
-        const thumbSelected = theme.colorSchemes[theme.palette.mode]?.custom.scrollbar.thumbSelected;
+        const track =
+          theme.colorSchemes[theme.palette.mode]?.custom.scrollbar.track;
+        const thumb =
+          theme.colorSchemes[theme.palette.mode]?.custom.scrollbar.thumb;
+        const thumbSelected =
+          theme.colorSchemes[theme.palette.mode]?.custom.scrollbar
+            .thumbSelected;
 
         return {
           body: {
@@ -79,30 +83,33 @@ const theme = createTheme({
               borderRadius: 8,
               backgroundColor: thumb,
               minHeight: 24,
-              border: "3px solid " + track,
+              border: `3px solid ${track}`,
             },
-            "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus": {
+            "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus":
+            {
               backgroundColor: thumbSelected,
             },
-            "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active": {
+            "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active":
+            {
               backgroundColor: thumbSelected,
             },
-            "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover": {
+            "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover":
+            {
               backgroundColor: thumbSelected,
             },
             "&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner": {
               backgroundColor: thumb,
             },
           },
-        }
+        };
       },
     },
-  }
+  },
 });
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={appTheme}>
       <CssBaseline />
       <RouterProvider router={router} />
     </ThemeProvider>

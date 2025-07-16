@@ -1,5 +1,3 @@
-
-import { styled } from "@mui/material/styles";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 // These types were created partially from https://github.com/mui/mui-x/issues/4623
@@ -25,7 +23,7 @@ function ExpandableTable<T extends string>({
         rows={rows}
         columns={columns}
         hideFooter
-      // density="compact"
+        // Density="compact"
       />
     </div>
   );
