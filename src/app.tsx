@@ -86,17 +86,17 @@ const appTheme = createTheme({
               border: `3px solid ${track}`,
             },
             "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus":
-            {
-              backgroundColor: thumbSelected,
-            },
+              {
+                backgroundColor: thumbSelected,
+              },
             "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active":
-            {
-              backgroundColor: thumbSelected,
-            },
+              {
+                backgroundColor: thumbSelected,
+              },
             "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover":
-            {
-              backgroundColor: thumbSelected,
-            },
+              {
+                backgroundColor: thumbSelected,
+              },
             "&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner": {
               backgroundColor: thumb,
             },

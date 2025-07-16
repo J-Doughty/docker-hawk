@@ -75,6 +75,7 @@ export default defineConfig([
       "prefer-template": 1,
       radix: 2,
       "require-await": 2,
+      "arrow-body-style": [1, "as-needed"],
       "simple-import-sort/exports": 1,
       "simple-import-sort/imports": [
         1,
