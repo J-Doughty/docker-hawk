@@ -38,7 +38,6 @@ export default defineConfig([
       "react/react-in-jsx-scope": "off",
       "react/function-component-definition": [1, { namedComponents: "function-declaration", unnamedComponents: "function-expression" }],
       "react/jsx-no-constructed-context-values": 1,
-      // "react/jsx-no-leaked-render": 2,
       "react/jsx-no-useless-fragment": 1,
       "react/jsx-pascal-case": 1,
       "react/no-array-index-key": 1,
@@ -107,6 +106,10 @@ export default defineConfig([
       radix: 2,
       "require-await": 2,
       "arrow-body-style": [1, "as-needed"],
+      "no-unassigned-vars": 2,
+      "no-use-before-define": 2,
+      "no-useless-assignment": 1,
+      "no-console": 1,
     },
   },
 ]);
