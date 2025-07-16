@@ -37,45 +37,33 @@ function RouteComponent() {
           <ExpandableTable
             columns={[
               {
-                key: "name",
-                displayName: "Name",
-                width: { xs: "70%", sm: "50%", md: "25%" },
+                field: "name",
+                headerName: "Name",
               },
               {
-                key: "id",
-                displayName: "Id",
-                width: { md: "25%", lg: "200px" },
+                field: "containerId",
+                headerName: "Id",
               },
               {
-                key: "image",
-                displayName: "Image",
-                width: { md: "25%", lg: "180px" },
+                field: "image",
+                headerName: "Image",
               },
               {
-                key: "state",
-                displayName: "State",
-                width: { xs: "30%", sm: "25%", md: "100px" },
+                field: "state",
+                headerName: "State",
               },
               {
-                key: "status",
-                displayName: "Status",
-                width: { sm: "25%", md: "25%", lg: "260px" },
+                field: "status",
+                headerName: "Status",
               },
             ]}
-            columnsToHide={{
-              xs: ["id", "image", "status"],
-              sm: ["id", "image"],
-            }}
             rows={containers.map((container) => ({
-              key: container.key,
-              rowValues: {
-                name: container.Names?.join(", "),
-                id: container.Id?.slice(0, 11),
-                image: container.Image,
-                state: container.State,
-                status: container.Status,
-              },
-              expandablePanel: <>Expanded</>,
+              id: Number(container.key),
+              name: container.Names?.join(", "),
+              containerId: container.Id?.slice(0, 11),
+              image: container.Image,
+              state: container.State,
+              status: container.Status,
             }))}
           />
         )}

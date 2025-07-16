@@ -165,7 +165,11 @@ export default function Sidebar({
           </React.Fragment>
         ))}
       </Drawer>
-      <Box component="main" className="flex-column flex-grow">
+      <Box
+        component="main"
+        className="flex-column flex-grow"
+        sx={{ overflow: "hidden" }}
+      >
         {children}
       </Box>
     </Box>
