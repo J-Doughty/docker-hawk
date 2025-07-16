@@ -8,7 +8,7 @@ type RowDefinition<T extends string> = Record<
   T,
   string | number | null | undefined
 > & {
-  id: number;
+  id: number | string;
 };
 
 function ExpandableTable<T extends string>({

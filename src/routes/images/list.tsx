@@ -62,7 +62,7 @@ function RouteComponent() {
               },
             ]}
             rows={images.map((image) => ({
-              id: Number(image.Id),
+              id: image.Id,
               name: image.RepoTags.join(", "),
               size: getSizeAsString(image.Size),
               numContainers: image.Containers,

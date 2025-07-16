@@ -63,7 +63,7 @@ function RouteComponent() {
               },
             ]}
             rows={containers.map((container) => ({
-              id: Number(container.key),
+              id: container.key,
               name: container.Names?.join(", "),
               containerId: container.Id?.slice(0, 11),
               image: container.Image,
