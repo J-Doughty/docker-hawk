@@ -19,9 +19,6 @@ export default defineConfig([
     languageOptions: { globals: globals.browser },
   },
   globalIgnores(["./src-tauri", "./dist", "./node_modules", ".tanstack"]),
-  tseslint.configs.recommended,
-  pluginReact.configs.flat.recommended,
-  eslintConfigPrettier,
   {
     settings: {
       react: {
@@ -29,15 +26,49 @@ export default defineConfig([
       },
     },
   },
+  tseslint.configs.recommended,
+  pluginReact.configs.flat.recommended,
+  eslintConfigPrettier,
   {
     plugins: {
       "unused-imports": unusedImports,
       "simple-import-sort": simpleImportSort,
     },
+    rules: {
+      "react/react-in-jsx-scope": "off",
+      "react/function-component-definition": [1, { namedComponents: "function-declaration", unnamedComponents: "function-expression" }],
+      "react/jsx-no-constructed-context-values": 1,
+      // "react/jsx-no-leaked-render": 2,
+      "react/jsx-no-useless-fragment": 1,
+      "react/jsx-pascal-case": 1,
+      "react/no-array-index-key": 1,
+      "simple-import-sort/exports": 1,
+      "simple-import-sort/imports": [
+        1,
+        {
+          groups: [
+            // `react` first, then packages starting with a character
+            ["^react$", "^[a-z]"],
+            // Packages starting with `@`
+            ["^@"],
+            // Packages starting with `~`
+            ["^~"],
+            // Imports starting with `../`
+            ["^\\.\\.(?!/?$)", "^\\.\\./?$"],
+            // Imports starting with `./`
+            ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
+            // Style imports
+            ["^.+\\.s?css$"],
+          ],
+        },
+      ],
+      // No no-unused-expressions detects this but it cannot auto fix it so we add this
+      // rule
+      "unused-imports/no-unused-imports": 1,
+    }
   },
   {
     rules: {
-      "react/react-in-jsx-scope": "off",
       "no-duplicate-imports": 1,
       "no-self-compare": 2,
       "no-unreachable-loop": 1,
@@ -76,29 +107,6 @@ export default defineConfig([
       radix: 2,
       "require-await": 2,
       "arrow-body-style": [1, "as-needed"],
-      "simple-import-sort/exports": 1,
-      "simple-import-sort/imports": [
-        1,
-        {
-          groups: [
-            // `react` first, then packages starting with a character
-            ["^react$", "^[a-z]"],
-            // Packages starting with `@`
-            ["^@"],
-            // Packages starting with `~`
-            ["^~"],
-            // Imports starting with `../`
-            ["^\\.\\.(?!/?$)", "^\\.\\./?$"],
-            // Imports starting with `./`
-            ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
-            // Style imports
-            ["^.+\\.s?css$"],
-          ],
-        },
-      ],
-      // No no-unused-expressions detects this but it cannot auto fix it so we add this
-      // rule
-      "unused-imports/no-unused-imports": 1,
     },
   },
 ]);

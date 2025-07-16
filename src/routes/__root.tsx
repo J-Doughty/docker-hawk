@@ -22,15 +22,13 @@ const sidebarLinks: SidebarLink[][] = [
 
 function RootComponent() {
   return (
-    <React.Fragment>
-      <div className="min-vh-100 flex-column">
-        <Sidebar sidebarLinks={sidebarLinks}>
-          <main className="flex-column flex-grow">
-            <Outlet />
-          </main>
-        </Sidebar>
-        <TanStackRouterDevtools />
-      </div>
-    </React.Fragment>
+    <div className="min-vh-100 flex-column">
+      <Sidebar sidebarLinks={sidebarLinks}>
+        <main className="flex-column flex-grow">
+          <Outlet />
+        </main>
+      </Sidebar>
+      <TanStackRouterDevtools />
+    </div>
   );
 }
