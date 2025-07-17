@@ -6,6 +6,7 @@ import { invoke } from "@tauri-apps/api/core";
 import PrimaryPageLayout from "../../components/shared/layout/primaryPageLayout";
 import ExpandableTable from "../../components/shared/table/expandableTable";
 import { ContainerSummary } from "../../types/tauri/commands/docker/ContainerSummary";
+import Typography from "@mui/material/Typography";
 
 export const Route = createFileRoute("/containers/list")({
   component: RouteComponent,
@@ -73,6 +74,14 @@ function RouteComponent() {
               image: container.Image,
               state: container.State,
               status: container.Status,
+              expanded: {
+                title: "Container details",
+                body: (
+                  <>
+                    <Typography><strong>Name:</strong> {container.Names?.join(", ")}</Typography>
+                  </>
+                )
+              }
             }))}
           />
         )}

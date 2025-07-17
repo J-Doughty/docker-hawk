@@ -6,6 +6,7 @@ import { invoke } from "@tauri-apps/api/core";
 import PrimaryPageLayout from "../../components/shared/layout/primaryPageLayout";
 import ExpandableTable from "../../components/shared/table/expandableTable";
 import { ImageSummary } from "../../types/tauri/commands/docker/ImageSummary";
+import Typography from "@mui/material/Typography";
 
 export const Route = createFileRoute("/images/list")({
   component: RouteComponent,
@@ -67,6 +68,14 @@ function RouteComponent() {
               size: getSizeAsString(image.Size),
               numContainers: image.Containers,
               createdAt: new Date(image.Created * 1000).toLocaleDateString(),
+              expanded: {
+                title: "Container details",
+                body: (
+                  <>
+                    <Typography><strong>Name:</strong> {image.RepoTags.join(", ")}</Typography>
+                  </>
+                )
+              }
             }))}
           />
         )}

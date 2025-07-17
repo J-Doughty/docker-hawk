@@ -1,6 +1,11 @@
-import { DataGrid, GridColDef, GridColumnVisibilityModel } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridColumnVisibilityModel, GridEventListener } from "@mui/x-data-grid";
 import { useBreakpoints } from "../../../hooks/useBreakpoints";
-import { useMemo, useState } from "react";
+import { ReactNode, useMemo, useState } from "react";
+import Drawer from "@mui/material/Drawer";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from '@mui/icons-material/Close';
 
 // These types were created partially from https://github.com/mui/mui-x/issues/4623
 type ColumnDefinition<T extends string> = GridColDef & { field: T };
@@ -10,6 +15,10 @@ type RowDefinition<T extends string> = Record<
   string | number | null | undefined
 > & {
   id: number | string;
+  expanded: {
+    title: string;
+    body: ReactNode
+  };
 };
 
 interface ColumnsToHideAtBreakpoint<T extends string> {
@@ -50,6 +59,18 @@ function ExpandableTable<T extends string>({
 }) {
   const screenBreakpoint = useBreakpoints();
   const [userSetColumns, setUserSetColumns] = useState<GridColumnVisibilityModel>({});
+  const [selectedRow, setSelectedRow] = useState<RowDefinition<T> | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const handleRowClick: GridEventListener<"rowClick"> = (params) => {
+    setSelectedRow(params.row);
+    setDrawerOpen(true);
+  };
+
+  const handleClose = () => {
+    setDrawerOpen(false);
+    setSelectedRow(null);
+  };
 
   const computedVisibility = useMemo(() => {
     const columnVisibility: GridColumnVisibilityModel = {};
@@ -92,8 +113,25 @@ function ExpandableTable<T extends string>({
         hideFooter
         columnVisibilityModel={computedVisibility}
         onColumnVisibilityModelChange={(visibilityModel) => updateUserSetColumns(visibilityModel)}
-      // Density="compact"
+        onRowClick={handleRowClick}
       />
+
+      {/* Expandable rows in a data grid is a Pro feature so implement this popout draw for now */}
+      <Drawer anchor="right" open={drawerOpen} onClose={handleClose}>
+        <Box sx={{ width: 300, p: 2 }}>
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Typography variant="h6">{selectedRow?.expanded.title}</Typography>
+            <IconButton onClick={handleClose}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          {selectedRow && (
+            <Box mt={2}>
+              {selectedRow.expanded.body}
+            </Box>
+          )}
+        </Box>
+      </Drawer>
     </div>
   );
 }
