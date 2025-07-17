@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 
+import Typography from "@mui/material/Typography";
 import { createFileRoute } from "@tanstack/react-router";
 import { invoke } from "@tauri-apps/api/core";
 
 import PrimaryPageLayout from "../../components/shared/layout/primaryPageLayout";
 import ExpandableTable from "../../components/shared/table/expandableTable";
 import { ImageSummary } from "../../types/tauri/commands/docker/ImageSummary";
-import Typography from "@mui/material/Typography";
 
 export const Route = createFileRoute("/images/list")({
   component: RouteComponent,
@@ -71,11 +71,11 @@ function RouteComponent() {
               expanded: {
                 title: "Container details",
                 body: (
-                  <>
-                    <Typography><strong>Name:</strong> {image.RepoTags.join(", ")}</Typography>
-                  </>
-                )
-              }
+                  <Typography>
+                    <strong>Name:</strong> {image.RepoTags.join(", ")}
+                  </Typography>
+                ),
+              },
             }))}
           />
         )}

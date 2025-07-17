@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 
+import Typography from "@mui/material/Typography";
 import { createFileRoute } from "@tanstack/react-router";
 import { invoke } from "@tauri-apps/api/core";
 
 import PrimaryPageLayout from "../../components/shared/layout/primaryPageLayout";
 import ExpandableTable from "../../components/shared/table/expandableTable";
 import { ContainerSummary } from "../../types/tauri/commands/docker/ContainerSummary";
-import Typography from "@mui/material/Typography";
 
 export const Route = createFileRoute("/containers/list")({
   component: RouteComponent,
@@ -65,7 +65,7 @@ function RouteComponent() {
             ]}
             columnsToHide={{
               xs: ["image", "state"],
-              sm: ["image", "state"]
+              sm: ["image", "state"],
             }}
             rows={containers.map((container) => ({
               id: container.key,
@@ -77,11 +77,11 @@ function RouteComponent() {
               expanded: {
                 title: "Container details",
                 body: (
-                  <>
-                    <Typography><strong>Name:</strong> {container.Names?.join(", ")}</Typography>
-                  </>
-                )
-              }
+                  <Typography>
+                    <strong>Name:</strong> {container.Names?.join(", ")}
+                  </Typography>
+                ),
+              },
             }))}
           />
         )}
