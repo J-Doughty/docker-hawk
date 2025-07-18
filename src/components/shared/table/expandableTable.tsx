@@ -124,7 +124,7 @@ function ExpandableTable<T extends string>({
   };
 
   return (
-    <div style={{ maxHeight: "100%", width: "100%" }}>
+    <div style={{ maxHeight: "100%", width: "100%", overflow: "auto" }}>
       <DataGrid
         rows={rows}
         columns={columns}

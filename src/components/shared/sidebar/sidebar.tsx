@@ -141,7 +141,7 @@ export default function Sidebar({
   };
 
   return (
-    <Box className="flex-row flex-grow">
+    <Box className="flex-row flex-grow h-100 overflow-hidden">
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
           <IconButton
@@ -167,7 +167,7 @@ export default function Sidebar({
       </Drawer>
       <Box
         component="main"
-        className="flex-column flex-grow"
+        className="h-100 flex-column flex-grow"
         sx={{ overflow: "hidden" }}
       >
         {children}

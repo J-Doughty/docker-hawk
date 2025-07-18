@@ -20,11 +20,9 @@ const sidebarLinks: SidebarLink[][] = [
 
 function RootComponent() {
   return (
-    <div className="min-vh-100 flex-column">
+    <div className="vh-100 flex-column">
       <Sidebar sidebarLinks={sidebarLinks}>
-        <main className="flex-column flex-grow">
-          <Outlet />
-        </main>
+        <Outlet />
       </Sidebar>
       <TanStackRouterDevtools />
     </div>

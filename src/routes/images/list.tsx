@@ -37,7 +37,7 @@ function RouteComponent() {
   return (
     <PrimaryPageLayout>
       <h1>Images</h1>
-      <section>
+      <section className="h-100 overflow-hidden">
         {images && (
           <ExpandableTable
             columns={[
