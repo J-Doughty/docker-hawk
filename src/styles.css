@@ -8,6 +8,14 @@
   flex-direction: row;
 }
 
+.justify-center {
+  justify-content: center;
+}
+
+.align-center {
+  align-items: center;
+}
+
 .flex-grow {
   flex: 1;
 }
@@ -30,4 +38,12 @@
 
 .overflow-hidden {
   overflow: hidden;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.p-0 {
+  padding: 0 !important;
 }

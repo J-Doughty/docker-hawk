@@ -9,13 +9,17 @@ import {
   DataGrid,
   GridColDef,
   GridColumnVisibilityModel,
-  GridEventListener,
+  GridRenderCellParams,
 } from "@mui/x-data-grid";
 
 import { useBreakpoints } from "../../../hooks/useBreakpoints";
+import OpenInFullIcon from '@mui/icons-material/OpenInFull';
+import Button from "@mui/material/Button";
 
 // These types were created partially from https://github.com/mui/mui-x/issues/4623
-type ColumnDefinition<T extends string> = GridColDef & { field: T };
+type ColumnField<T extends string> = T | "expand";
+
+type ColumnDefinition<T extends string> = GridColDef & { field: ColumnField<T>; };
 
 type RowDefinition<T extends string> = Record<
   T,
@@ -29,11 +33,11 @@ type RowDefinition<T extends string> = Record<
 };
 
 interface ColumnsToHideAtBreakpoint<T extends string> {
-  xs?: T[];
-  sm?: T[];
-  md?: T[];
-  lg?: T[];
-  xl?: T[];
+  xs?: ColumnField<T>[];
+  sm?: ColumnField<T>[];
+  md?: ColumnField<T>[];
+  lg?: ColumnField<T>[];
+  xl?: ColumnField<T>[];
 }
 
 const getDefaultHiddenColumns = <T extends string>(
@@ -74,15 +78,31 @@ function ExpandableTable<T extends string>({
   const [selectedRow, setSelectedRow] = useState<RowDefinition<T> | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const handleRowClick: GridEventListener<"rowClick"> = (params) => {
-    setSelectedRow(params.row);
+  const expandRow = (row: RowDefinition<T>) => {
+    setSelectedRow(row);
     setDrawerOpen(true);
   };
 
-  const handleClose = () => {
+  const collapseRow = () => {
     setDrawerOpen(false);
     setSelectedRow(null);
   };
+
+  columns = [
+    {
+      field: 'expand',
+      headerName: '',
+      width: 50,
+      sortable: false,
+      cellClassName: 'p-0',
+      renderCell: (params: GridRenderCellParams<RowDefinition<T>>) => (
+        <div className="flex-column align-center justify-center h-100 w-100">
+          <Button variant="text" className="h-100 w-100" onClick={() => expandRow(params.row)}>
+            <OpenInFullIcon /></Button>
+        </div>
+      ),
+    }, ...columns
+  ]
 
   const computedVisibility = useMemo(() => {
     const columnVisibility: GridColumnVisibilityModel = {};
@@ -133,7 +153,6 @@ function ExpandableTable<T extends string>({
         onColumnVisibilityModelChange={(visibilityModel) =>
           updateUserSetColumns(visibilityModel)
         }
-        onRowClick={handleRowClick}
         disableColumnMenu
         // TODO On the toolbar, overriden reset columns so that it clears user defined columns
         // and sets the columns for the breakpoint
@@ -141,7 +160,7 @@ function ExpandableTable<T extends string>({
       />
 
       {/* Expandable rows in a data grid is a Pro feature so implement this popout draw for now */}
-      <Drawer anchor="right" open={drawerOpen} onClose={handleClose}>
+      <Drawer anchor="right" open={drawerOpen} onClose={collapseRow}>
         <Box sx={{ width: 300, p: 2 }}>
           <Box
             display="flex"
@@ -149,7 +168,7 @@ function ExpandableTable<T extends string>({
             alignItems="center"
           >
             <Typography variant="h6">{selectedRow?.expanded.title}</Typography>
-            <IconButton onClick={handleClose}>
+            <IconButton onClick={collapseRow}>
               <CloseIcon />
             </IconButton>
           </Box>
