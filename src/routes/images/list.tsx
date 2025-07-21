@@ -69,7 +69,7 @@ function RouteComponent() {
               numContainers: image.Containers,
               createdAt: new Date(image.Created * 1000).toLocaleDateString(),
               expanded: {
-                title: "Container details",
+                title: "Image details",
                 body: (
                   <Typography>
                     <strong>Name:</strong> {image.RepoTags.join(", ")}
