@@ -15,6 +15,7 @@ import {
 import { useBreakpoints } from "../../../hooks/useBreakpoints";
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import Button from "@mui/material/Button";
+import "./expandableTable.css";
 
 // These types were created partially from https://github.com/mui/mui-x/issues/4623
 type ColumnField<T extends string> = T | "expand";
@@ -95,6 +96,7 @@ function ExpandableTable<T extends string>({
       width: 50,
       sortable: false,
       cellClassName: 'p-0',
+      hideable: false,
       renderCell: (params: GridRenderCellParams<RowDefinition<T>>) => (
         <div className="flex-column align-center justify-center h-100 w-100">
           <Button variant="text" className="h-100 w-100" onClick={() => expandRow(params.row)}>
@@ -136,6 +138,18 @@ function ExpandableTable<T extends string>({
         // If something changed then the user has modified the visibility of that column
         if (computedVisibility[column] !== visibilityModel[column]) {
           userUpdatedVisibilityModel[column] = visibilityModel[column];
+        }
+      }
+
+      // This is a specical case where they've clicked to show/hide all columns
+      const hideableColumnNames = columns.filter(col => col.hideable !== false).map(col => col.field)
+
+      if (Object.keys(visibilityModel).filter(column => hideableColumnNames.includes(column as T)).length === 0) {
+        const previousValueNotSet = Object.keys(prev).length === 0;
+        const allColumnsHidden = Object.values(prev).reduce((acc, colShown) => acc || colShown, false)
+
+        for (const column of hideableColumnNames) {
+          userUpdatedVisibilityModel[column] = !previousValueNotSet && !allColumnsHidden;
         }
       }
 
