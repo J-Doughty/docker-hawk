@@ -14,6 +14,7 @@ export const Route = createFileRoute("/containers/list")({
 
 interface DockerContainerSummary extends ContainerSummary {
   key: string;
+  composeProject?: string;
 }
 
 function RouteComponent() {
@@ -25,8 +26,10 @@ function RouteComponent() {
         dockerContainers.map((container) => ({
           ...container,
           key: container.Id ?? crypto.randomUUID(),
-        })),
-      ),
+          // TODO map labels into their own object, possibly on the rust side
+          composeProject: container.Labels?.["com.docker.compose.project"],
+        }))
+      )
     );
   }, []);
 
@@ -62,9 +65,14 @@ function RouteComponent() {
                 headerName: "Status",
                 flex: 1,
               },
+              {
+                field: "composeProject",
+                headerName: "Compose project",
+                flex: 1,
+              }
             ]}
             columnsToHide={{
-              xs: ["image", "state"],
+              xs: ["image", "state", "containerId"],
               sm: ["image", "state"],
             }}
             rows={containers.map((container) => ({
@@ -74,6 +82,7 @@ function RouteComponent() {
               image: container.Image,
               state: container.State,
               status: container.Status,
+              composeProject: container.composeProject ?? "-",
               expanded: {
                 title: "Container details",
                 body: (
