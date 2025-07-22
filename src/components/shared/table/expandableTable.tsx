@@ -1,7 +1,9 @@
 import { ReactNode, useMemo, useState } from "react";
 
 import CloseIcon from "@mui/icons-material/Close";
+import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
@@ -13,14 +15,15 @@ import {
 } from "@mui/x-data-grid";
 
 import { useBreakpoints } from "../../../hooks/useBreakpoints";
-import OpenInFullIcon from '@mui/icons-material/OpenInFull';
-import Button from "@mui/material/Button";
+
 import "./expandableTable.css";
 
 // These types were created partially from https://github.com/mui/mui-x/issues/4623
 type ColumnField<T extends string> = T | "expand";
 
-type ColumnDefinition<T extends string> = GridColDef & { field: ColumnField<T>; };
+type ColumnDefinition<T extends string> = GridColDef & {
+  field: ColumnField<T>;
+};
 
 type RowDefinition<T extends string> = Record<
   T,
@@ -91,20 +94,27 @@ function ExpandableTable<T extends string>({
 
   columns = [
     {
-      field: 'expand',
-      headerName: '',
+      field: "expand",
+      headerName: "",
       width: 50,
       sortable: false,
-      cellClassName: 'p-0',
+      cellClassName: "p-0",
       hideable: false,
+      filterable: false,
       renderCell: (params: GridRenderCellParams<RowDefinition<T>>) => (
         <div className="flex-column align-center justify-center h-100 w-100">
-          <Button variant="text" className="h-100 w-100" onClick={() => expandRow(params.row)}>
-            <OpenInFullIcon /></Button>
+          <Button
+            variant="text"
+            className="h-100 w-100"
+            onClick={() => expandRow(params.row)}
+          >
+            <OpenInFullIcon />
+          </Button>
         </div>
       ),
-    }, ...columns
-  ]
+    },
+    ...columns,
+  ];
 
   const computedVisibility = useMemo(() => {
     const columnVisibility: GridColumnVisibilityModel = {};
@@ -142,14 +152,24 @@ function ExpandableTable<T extends string>({
       }
 
       // This is a specical case where they've clicked to show/hide all columns
-      const hideableColumnNames = columns.filter(col => col.hideable !== false).map(col => col.field)
+      const hideableColumnNames = columns
+        .filter((col) => col.hideable !== false)
+        .map((col) => col.field);
 
-      if (Object.keys(visibilityModel).filter(column => hideableColumnNames.includes(column as T)).length === 0) {
+      if (
+        Object.keys(visibilityModel).filter((column) =>
+          hideableColumnNames.includes(column as T),
+        ).length === 0
+      ) {
         const previousValueNotSet = Object.keys(prev).length === 0;
-        const allColumnsHidden = Object.values(prev).reduce((acc, colShown) => acc || colShown, false)
+        const allColumnsHidden = Object.values(prev).reduce(
+          (acc, colShown) => acc || colShown,
+          false,
+        );
 
         for (const column of hideableColumnNames) {
-          userUpdatedVisibilityModel[column] = !previousValueNotSet && !allColumnsHidden;
+          userUpdatedVisibilityModel[column] =
+            !previousValueNotSet && !allColumnsHidden;
         }
       }
 
@@ -171,9 +191,17 @@ function ExpandableTable<T extends string>({
         // TODO On the toolbar, overriden reset columns so that it clears user defined columns
         // and sets the columns for the breakpoint
         showToolbar
+        disableDensitySelector
+        slotProps={{
+          toolbar: {
+            printOptions: { disableToolbarButton: true },
+            csvOptions: { disableToolbarButton: true },
+          },
+        }}
       />
 
       {/* Expandable rows in a data grid is a Pro feature so implement this popout draw for now */}
+      {/* The premium model also supports grouping rows which may be useful for compose project */}
       <Drawer anchor="right" open={drawerOpen} onClose={collapseRow}>
         <Box sx={{ width: 300, p: 2 }}>
           <Box

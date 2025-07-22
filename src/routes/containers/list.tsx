@@ -28,8 +28,8 @@ function RouteComponent() {
           key: container.Id ?? crypto.randomUUID(),
           // TODO map labels into their own object, possibly on the rust side
           composeProject: container.Labels?.["com.docker.compose.project"],
-        }))
-      )
+        })),
+      ),
     );
   }, []);
 
@@ -69,7 +69,7 @@ function RouteComponent() {
                 field: "composeProject",
                 headerName: "Compose project",
                 flex: 1,
-              }
+              },
             ]}
             columnsToHide={{
               xs: ["image", "state", "containerId"],

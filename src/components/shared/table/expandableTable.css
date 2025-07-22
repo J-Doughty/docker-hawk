@@ -1,3 +1,4 @@
+/* TODO this class may leak into other components */
 .MuiDataGrid-columnsManagement .Mui-disabled {
-    display: none;
+  display: none;
 }
