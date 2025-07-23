@@ -20,6 +20,8 @@ import {
   FilterPanelPropsOverrides,
   GridColDef,
   GridColumnVisibilityModel,
+  GridFilterOperator,
+  GridLogicOperator,
   GridRenderCellParams,
 } from "@mui/x-data-grid";
 
@@ -66,11 +68,7 @@ function CustomFilterPanel({ filters, setFilters }: FilterPanelPropsOverrides) {
   type FormValues = { showStopped?: boolean; composeProject?: string };
 
   const { control } = useForm<FormValues>({
-    defaultValues: {
-      showStopped: true,
-      composeProject: "",
-      ...filters,
-    },
+    values: filters,
   });
   const watchForm = useWatch({ control });
 
@@ -162,7 +160,10 @@ function ExpandableTable<T extends string>({
     useState<GridColumnVisibilityModel>({});
   const [selectedRow, setSelectedRow] = useState<RowDefinition<T> | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [filters, setFilters] = useState<Record<string, string | boolean>>({});
+  const [filters, setFilters] = useState<Record<string, string | boolean>>({
+    showStopped: true,
+    composeProject: "",
+  });
 
   const expandRow = (row: RowDefinition<T>) => {
     setSelectedRow(row);
@@ -195,7 +196,37 @@ function ExpandableTable<T extends string>({
         </div>
       ),
     },
-    ...columns,
+    // ...columns
+    ...columns.map(column => {
+      const includeStoppedFilter: GridFilterOperator = {
+        value: 'includeStopped',
+        getApplyFilterFn: (filterItem, column) => {
+          return (value, row, column, apiRef): boolean => {
+            console.log("showstopped", filters.showStopped, filters.composeProject, value)
+            return filters.showStopped === true || value === "running";
+          };
+        }
+      };
+
+      const composeProjectFilter: GridFilterOperator = {
+        value: 'matchesComposeProject',
+        getApplyFilterFn: (filterItem, column) => {
+          return (value, row, column, apiRef): boolean => {
+            return filters.composeProject ? value === filters.composeProject : true;
+          };
+        }
+      };
+
+      if (column.field === "state") {
+        return { ...column, filterOperators: [includeStoppedFilter] }
+      }
+
+      if (column.field === "composeProject") {
+        return { ...column, filterOperators: [composeProjectFilter] }
+      }
+
+      return column;
+    }),
   ];
 
   const computedVisibility = useMemo(() => {
@@ -284,6 +315,14 @@ function ExpandableTable<T extends string>({
             filters,
             setFilters,
           },
+        }}
+        filterModel={{
+          items: [{
+            id: 1, field: "state", operator: "includeStopped"
+          },
+          {
+            id: 2, field: "composeProject", operator: "matchesComposeProject"
+          }], logicOperator: GridLogicOperator.And
         }}
       />
 
