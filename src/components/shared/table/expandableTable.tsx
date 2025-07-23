@@ -17,11 +17,8 @@ import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
 import {
   DataGrid,
-  FilterPanelPropsOverrides,
   GridColDef,
   GridColumnVisibilityModel,
-  GridFilterOperator,
-  GridLogicOperator,
   GridRenderCellParams,
 } from "@mui/x-data-grid";
 
@@ -29,16 +26,27 @@ import { useBreakpoints } from "../../../hooks/useBreakpoints";
 
 import "./expandableTable.css";
 
+type RowValue = string | number | null | undefined;
+
+interface FilterDefinition<T extends string> {
+  field: T;
+  predicate: <K = boolean | string, >(filterValue: K, rowValue: RowValue) => boolean;
+  type: "select" | "toggle";
+  name: string;
+  label: string;
+}
+
 // These types were created partially from https://github.com/mui/mui-x/issues/4623
 type ColumnField<T extends string> = T | "expand";
 
 type ColumnDefinition<T extends string> = GridColDef & {
   field: ColumnField<T>;
+  filter?: FilterDefinition<T>
 };
 
 type RowDefinition<T extends string> = Record<
   T,
-  string | number | null | undefined
+  RowValue
 > & {
   id: number | string;
   expanded: {
@@ -55,25 +63,27 @@ interface ColumnsToHideAtBreakpoint<T extends string> {
   xl?: ColumnField<T>[];
 }
 
-declare module "@mui/x-data-grid" {
-  interface FilterPanelPropsOverrides {
-    filters: any;
-    setFilters: React.Dispatch<
-      React.SetStateAction<Record<string, string | boolean>>
-    >;
-  }
+interface FilterPanelProps<T extends string> {
+  filterValues: Record<string, string | boolean | undefined>;
+  setFilterValues: React.Dispatch<
+    React.SetStateAction<Record<string, string | boolean | undefined>>
+  >;
+  filterDefinitions: FilterDefinition<T>[] | undefined
 }
 
-function CustomFilterPanel({ filters, setFilters }: FilterPanelPropsOverrides) {
-  type FormValues = { showStopped?: boolean; composeProject?: string };
+declare module "@mui/x-data-grid" {
+  interface FilterPanelPropsOverrides extends FilterPanelProps<string> { }
+}
 
-  const { control } = useForm<FormValues>({
-    values: filters,
+
+function CustomFilterPanel<T extends string>({ filterValues, setFilterValues, filterDefinitions }: FilterPanelProps<T>) {
+  const { control } = useForm<typeof filterValues>({
+    values: filterValues,
   });
   const watchForm = useWatch({ control });
 
   useEffect(() => {
-    setFilters(watchForm);
+    setFilterValues(watchForm);
   }, [watchForm]);
 
   return (
@@ -81,42 +91,40 @@ function CustomFilterPanel({ filters, setFilters }: FilterPanelPropsOverrides) {
       <h3 style={{ padding: 0, marginTop: 0 }}>Filters</h3>
       <form>
         <FormGroup className="flex-column" style={{ gap: "1em" }}>
-          <Controller
-            control={control}
-            name="showStopped"
-            render={({ field }) => (
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={field.value ?? false}
-                    onChange={field.onChange}
-                  />
-                }
-                label="Show stopped containers"
-                {...field}
-              />
-            )}
-          />
-          <Controller
-            control={control}
-            name="composeProject"
-            render={({ field }) => (
-              <FormControl fullWidth>
-                <InputLabel id="compose-project-select-label">
-                  Compose project
-                </InputLabel>
-                <Select
-                  labelId="compose-project-select-label"
-                  id="compose-project-select"
-                  label="Compose project"
-                  {...field}
-                >
-                  <MenuItem value="">&nbsp;</MenuItem>
-                  <MenuItem value="nginx">nginx</MenuItem>
-                </Select>
-              </FormControl>
-            )}
-          />
+          {
+            // TODO dont show the button if theres no filters
+            filterDefinitions?.map(filterDefinition => (
+              <Controller
+                control={control}
+                name={filterDefinition.name}
+                render={({ field }) => (
+                  filterDefinition.type === "toggle" ? (
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={field.value as boolean | undefined ?? false}
+                          onChange={field.onChange}
+                        />
+                      }
+                      label={filterDefinition.label}
+                      {...field}
+                    />
+                  ) : (
+                    <FormControl fullWidth>
+                      <InputLabel id="compose-project-select-label">
+                        Compose project
+                      </InputLabel>
+                      <Select
+                        label={filterDefinition.label}
+                        {...field}
+                      >
+                        <MenuItem value="">&nbsp;</MenuItem>
+                        <MenuItem value="nginx">nginx</MenuItem>
+                      </Select>
+                    </FormControl>
+                  )
+                )
+                } />))}
         </FormGroup>
       </form>
     </div>
@@ -150,20 +158,27 @@ function ExpandableTable<T extends string>({
   columns,
   rows,
   columnsToHide,
+  filters
 }: {
   columns: ColumnDefinition<T>[];
   rows: RowDefinition<T>[];
   columnsToHide?: ColumnsToHideAtBreakpoint<T>;
+  filters?: FilterDefinition<T>[];
 }) {
   const screenBreakpoint = useBreakpoints();
   const [userSetColumns, setUserSetColumns] =
     useState<GridColumnVisibilityModel>({});
   const [selectedRow, setSelectedRow] = useState<RowDefinition<T> | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [filters, setFilters] = useState<Record<string, string | boolean>>({
+  const [filterValues, setFilterValues] = useState<Record<string, string | boolean | undefined>>({
     showStopped: true,
     composeProject: "",
   });
+  const filterPanel: FilterPanelProps<T> = {
+    filterValues,
+    setFilterValues,
+    filterDefinitions: filters,
+  }
 
   const expandRow = (row: RowDefinition<T>) => {
     setSelectedRow(row);
@@ -196,37 +211,7 @@ function ExpandableTable<T extends string>({
         </div>
       ),
     },
-    // ...columns
-    ...columns.map(column => {
-      const includeStoppedFilter: GridFilterOperator = {
-        value: 'includeStopped',
-        getApplyFilterFn: (filterItem, column) => {
-          return (value, row, column, apiRef): boolean => {
-            console.log("showstopped", filters.showStopped, filters.composeProject, value)
-            return filters.showStopped === true || value === "running";
-          };
-        }
-      };
-
-      const composeProjectFilter: GridFilterOperator = {
-        value: 'matchesComposeProject',
-        getApplyFilterFn: (filterItem, column) => {
-          return (value, row, column, apiRef): boolean => {
-            return filters.composeProject ? value === filters.composeProject : true;
-          };
-        }
-      };
-
-      if (column.field === "state") {
-        return { ...column, filterOperators: [includeStoppedFilter] }
-      }
-
-      if (column.field === "composeProject") {
-        return { ...column, filterOperators: [composeProjectFilter] }
-      }
-
-      return column;
-    }),
+    ...columns
   ];
 
   const computedVisibility = useMemo(() => {
@@ -290,10 +275,17 @@ function ExpandableTable<T extends string>({
     });
   };
 
+  const getFilteredRowData = useMemo(() => {
+    return filters ? rows.filter(
+      // TODO these dont wait for the filter to be set
+      row => filters.every(filter => filter.predicate(filterValues[filter.name], row[filter.field]))
+    ) : rows;
+  }, [filterValues, rows])
+
   return (
     <div style={{ maxHeight: "100%", width: "100%", overflow: "auto" }}>
       <DataGrid
-        rows={rows}
+        rows={getFilteredRowData}
         columns={columns}
         hideFooter
         columnVisibilityModel={computedVisibility}
@@ -311,18 +303,7 @@ function ExpandableTable<T extends string>({
             printOptions: { disableToolbarButton: true },
             csvOptions: { disableToolbarButton: true },
           },
-          filterPanel: {
-            filters,
-            setFilters,
-          },
-        }}
-        filterModel={{
-          items: [{
-            id: 1, field: "state", operator: "includeStopped"
-          },
-          {
-            id: 2, field: "composeProject", operator: "matchesComposeProject"
-          }], logicOperator: GridLogicOperator.And
+          filterPanel: filterPanel
         }}
       />
 
