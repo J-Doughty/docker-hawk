@@ -71,6 +71,24 @@ function RouteComponent() {
                 flex: 1,
               },
             ]}
+            filters={[
+              {
+                field: "state",
+                predicate: (filterValue, rowValue) => (filterValue === true || rowValue === "running"),
+                type: "toggle",
+                name: "showStoppedContainers",
+                label: "Show stopped containers",
+                default: true,
+              },
+              {
+                field: "composeProject",
+                predicate: (filterValue, rowValue) => (filterValue ? filterValue === rowValue : true),
+                type: "select",
+                name: "composeProject",
+                label: "Show stopped containers",
+                default: "",
+              },
+            ]}
             columnsToHide={{
               xs: ["image", "state", "containerId"],
               sm: ["image", "state"],

@@ -28,13 +28,32 @@ import "./expandableTable.css";
 
 type RowValue = string | number | null | undefined;
 
-interface FilterDefinition<T extends string> {
+type FilterType = "toggle" | "select";
+
+type FilterFormValue = string | boolean | undefined;
+
+type FilterPredicate<U> = (filterValue: U, rowValue: RowValue) => boolean;
+
+interface FilterDefinitionBase<T, U> {
+  // TODO i think we should pass in the full row instead of just the field on that row
   field: T;
-  predicate: <K = boolean | string, >(filterValue: K, rowValue: RowValue) => boolean;
-  type: "select" | "toggle";
+  predicate: FilterPredicate<U>;
+  type: FilterType;
   name: string;
   label: string;
+  default: U;
 }
+
+interface ToggleFilter<T extends string> extends FilterDefinitionBase<T, boolean> {
+  type: "toggle";
+
+}
+
+interface SelectFilter<T extends string> extends FilterDefinitionBase<T, string> {
+  type: "select";
+}
+
+type FilterDefinition<T extends string> = ToggleFilter<T> | SelectFilter<T>
 
 // These types were created partially from https://github.com/mui/mui-x/issues/4623
 type ColumnField<T extends string> = T | "expand";
@@ -64,11 +83,13 @@ interface ColumnsToHideAtBreakpoint<T extends string> {
 }
 
 interface FilterPanelProps<T extends string> {
-  filterValues: Record<string, string | boolean | undefined>;
+  // TODO improve typing here
+  filterValues: Record<string, FilterFormValue>;
   setFilterValues: React.Dispatch<
-    React.SetStateAction<Record<string, string | boolean | undefined>>
+    React.SetStateAction<Record<string, FilterFormValue>>
   >;
   filterDefinitions: FilterDefinition<T>[] | undefined
+  selectOptions: Partial<Record<T, Set<RowValue>>>;
 }
 
 declare module "@mui/x-data-grid" {
@@ -76,7 +97,7 @@ declare module "@mui/x-data-grid" {
 }
 
 
-function CustomFilterPanel<T extends string>({ filterValues, setFilterValues, filterDefinitions }: FilterPanelProps<T>) {
+function CustomFilterPanel<T extends string>({ filterValues, setFilterValues, filterDefinitions, selectOptions }: FilterPanelProps<T>) {
   const { control } = useForm<typeof filterValues>({
     values: filterValues,
   });
@@ -95,6 +116,7 @@ function CustomFilterPanel<T extends string>({ filterValues, setFilterValues, fi
             // TODO dont show the button if theres no filters
             filterDefinitions?.map(filterDefinition => (
               <Controller
+                key={filterDefinition.name}
                 control={control}
                 name={filterDefinition.name}
                 render={({ field }) => (
@@ -119,7 +141,9 @@ function CustomFilterPanel<T extends string>({ filterValues, setFilterValues, fi
                         {...field}
                       >
                         <MenuItem value="">&nbsp;</MenuItem>
-                        <MenuItem value="nginx">nginx</MenuItem>
+                        {Array.from(selectOptions[filterDefinition.field] ?? []).filter(option => option !== null || option !== undefined).map(option => (
+                          <MenuItem key={option} value={option?.toString()}>{option}</MenuItem>
+                        ))}
                       </Select>
                     </FormControl>
                   )
@@ -166,19 +190,12 @@ function ExpandableTable<T extends string>({
   filters?: FilterDefinition<T>[];
 }) {
   const screenBreakpoint = useBreakpoints();
-  const [userSetColumns, setUserSetColumns] =
-    useState<GridColumnVisibilityModel>({});
+
+  const [userSetColumns, setUserSetColumns] = useState<GridColumnVisibilityModel>({});
   const [selectedRow, setSelectedRow] = useState<RowDefinition<T> | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [filterValues, setFilterValues] = useState<Record<string, string | boolean | undefined>>({
-    showStopped: true,
-    composeProject: "",
-  });
-  const filterPanel: FilterPanelProps<T> = {
-    filterValues,
-    setFilterValues,
-    filterDefinitions: filters,
-  }
+  const [filterValues, setFilterValues] = useState<Record<string, FilterFormValue>>(
+    filters?.reduce((acc, filter) => ({ ...acc, [filter.name]: filter.default }), {}) ?? {});
 
   const expandRow = (row: RowDefinition<T>) => {
     setSelectedRow(row);
@@ -277,10 +294,27 @@ function ExpandableTable<T extends string>({
 
   const getFilteredRowData = useMemo(() => {
     return filters ? rows.filter(
-      // TODO these dont wait for the filter to be set
-      row => filters.every(filter => filter.predicate(filterValues[filter.name], row[filter.field]))
+      row => filters.every(filter => (filter.predicate as FilterPredicate<FilterFormValue>)(filterValues[filter.name], row[filter.field]))
     ) : rows;
   }, [filterValues, rows])
+
+  const getSelectFilterOptions = useMemo(() => {
+    const selectFilterOptions: Partial<Record<T, Set<RowValue>>> = {};
+    const columnsWithSelectFilter = filters?.filter(filter => filter.type === "select").map(filter => filter.field) ?? []
+
+    for (const column of columnsWithSelectFilter) {
+      selectFilterOptions[column] = new Set(rows.map(row => row[column]));
+    }
+
+    return selectFilterOptions;
+  }, [])
+
+  const filterPanel: FilterPanelProps<T> = {
+    filterValues,
+    setFilterValues,
+    filterDefinitions: filters,
+    selectOptions: getSelectFilterOptions,
+  }
 
   return (
     <div style={{ maxHeight: "100%", width: "100%", overflow: "auto" }}>
