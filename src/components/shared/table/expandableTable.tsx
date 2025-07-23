@@ -8,15 +8,31 @@ import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import {
+  ColumnsPanelTrigger,
   DataGrid,
+  FilterPanelTrigger,
   GridColDef,
   GridColumnVisibilityModel,
+  GridFilterPanel,
   GridRenderCellParams,
+  Toolbar,
+  ToolbarButton,
 } from "@mui/x-data-grid";
+import { useForm, SubmitHandler } from "react-hook-form"
 
 import { useBreakpoints } from "../../../hooks/useBreakpoints";
 
 import "./expandableTable.css";
+import Tooltip from "@mui/material/Tooltip";
+import ViewColumnIcon from "@mui/icons-material/ViewColumn";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import Switch from "@mui/material/Switch";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import FormControl from "@mui/material/FormControl";
 
 // These types were created partially from https://github.com/mui/mui-x/issues/4623
 type ColumnField<T extends string> = T | "expand";
@@ -43,6 +59,59 @@ interface ColumnsToHideAtBreakpoint<T extends string> {
   lg?: ColumnField<T>[];
   xl?: ColumnField<T>[];
 }
+
+function CustomToolbar() {
+  return (
+    <Toolbar>
+      <Tooltip title="Columns">
+        <ColumnsPanelTrigger render={<ToolbarButton />}>
+          <ViewColumnIcon fontSize="small" />
+        </ColumnsPanelTrigger>
+      </Tooltip>
+      <Tooltip title="Filters">
+        <FilterPanelTrigger render={<ToolbarButton />}>
+          <FilterListIcon fontSize="small" />
+        </FilterPanelTrigger>
+      </Tooltip>
+    </Toolbar>
+  );
+}
+
+
+function CustomFilterPanel() {
+  type FormValues = { showStopped?: boolean, composeProject?: string }
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<FormValues>()
+  const onSubmit: SubmitHandler<FormValues> = (data) => console.log(data)
+
+  return (
+    <div style={{ padding: "1em 2em" }}>
+      <h3 style={{ padding: 0, marginTop: 0 }}>Filters</h3>
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <FormGroup className="flex-column" style={{ gap: "1em" }}>
+          <FormControlLabel control={<Switch defaultChecked />} label="Show stopped containers" />
+          <FormControl fullWidth>
+            <InputLabel id="demo-simple-select-label">Age</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              label="Age"
+            >
+              <MenuItem value={10}>Ten</MenuItem>
+              <MenuItem value={20}>Twenty</MenuItem>
+              <MenuItem value={30}>Thirty</MenuItem>
+            </Select>
+          </FormControl>
+        </FormGroup>
+      </form>
+    </div>
+  );
+}
+
 
 const getDefaultHiddenColumns = <T extends string>(
   columns: ColumnDefinition<T>[],
@@ -192,12 +261,13 @@ function ExpandableTable<T extends string>({
         // and sets the columns for the breakpoint
         showToolbar
         disableDensitySelector
-        slotProps={{
-          toolbar: {
-            printOptions: { disableToolbarButton: true },
-            csvOptions: { disableToolbarButton: true },
-          },
-        }}
+        slots={{ toolbar: CustomToolbar, filterPanel: CustomFilterPanel }}
+      // slotProps={{
+      //   toolbar: {
+      //     printOptions: { disableToolbarButton: true },
+      //     csvOptions: { disableToolbarButton: true },
+      //   },
+      // }}
       />
 
       {/* Expandable rows in a data grid is a Pro feature so implement this popout draw for now */}
@@ -222,3 +292,4 @@ function ExpandableTable<T extends string>({
 }
 
 export default ExpandableTable;
+
