@@ -1,38 +1,31 @@
-import { ReactNode, useMemo, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
+import { Controller, useForm, useWatch } from "react-hook-form";
 
 import CloseIcon from "@mui/icons-material/Close";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Drawer from "@mui/material/Drawer";
+import FormControl from "@mui/material/FormControl";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
 import IconButton from "@mui/material/IconButton";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import Switch from "@mui/material/Switch";
 import Typography from "@mui/material/Typography";
 import {
-  ColumnsPanelTrigger,
   DataGrid,
-  FilterPanelTrigger,
+  FilterPanelPropsOverrides,
   GridColDef,
   GridColumnVisibilityModel,
-  GridFilterPanel,
   GridRenderCellParams,
-  Toolbar,
-  ToolbarButton,
 } from "@mui/x-data-grid";
-import { useForm, SubmitHandler } from "react-hook-form"
 
 import { useBreakpoints } from "../../../hooks/useBreakpoints";
 
 import "./expandableTable.css";
-import Tooltip from "@mui/material/Tooltip";
-import ViewColumnIcon from "@mui/icons-material/ViewColumn";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import Switch from "@mui/material/Switch";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormGroup from "@mui/material/FormGroup";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import FormControl from "@mui/material/FormControl";
 
 // These types were created partially from https://github.com/mui/mui-x/issues/4623
 type ColumnField<T extends string> = T | "expand";
@@ -60,58 +53,77 @@ interface ColumnsToHideAtBreakpoint<T extends string> {
   xl?: ColumnField<T>[];
 }
 
-function CustomToolbar() {
-  return (
-    <Toolbar>
-      <Tooltip title="Columns">
-        <ColumnsPanelTrigger render={<ToolbarButton />}>
-          <ViewColumnIcon fontSize="small" />
-        </ColumnsPanelTrigger>
-      </Tooltip>
-      <Tooltip title="Filters">
-        <FilterPanelTrigger render={<ToolbarButton />}>
-          <FilterListIcon fontSize="small" />
-        </FilterPanelTrigger>
-      </Tooltip>
-    </Toolbar>
-  );
+declare module "@mui/x-data-grid" {
+  interface FilterPanelPropsOverrides {
+    filters: any;
+    setFilters: React.Dispatch<
+      React.SetStateAction<Record<string, string | boolean>>
+    >;
+  }
 }
 
+function CustomFilterPanel({ filters, setFilters }: FilterPanelPropsOverrides) {
+  type FormValues = { showStopped?: boolean; composeProject?: string };
 
-function CustomFilterPanel() {
-  type FormValues = { showStopped?: boolean, composeProject?: string }
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm<FormValues>()
-  const onSubmit: SubmitHandler<FormValues> = (data) => console.log(data)
+  const { control } = useForm<FormValues>({
+    defaultValues: {
+      showStopped: true,
+      composeProject: "",
+      ...filters,
+    },
+  });
+  const watchForm = useWatch({ control });
+
+  useEffect(() => {
+    setFilters(watchForm);
+  }, [watchForm]);
 
   return (
     <div style={{ padding: "1em 2em" }}>
       <h3 style={{ padding: 0, marginTop: 0 }}>Filters</h3>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form>
         <FormGroup className="flex-column" style={{ gap: "1em" }}>
-          <FormControlLabel control={<Switch defaultChecked />} label="Show stopped containers" />
-          <FormControl fullWidth>
-            <InputLabel id="demo-simple-select-label">Age</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              label="Age"
-            >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
-            </Select>
-          </FormControl>
+          <Controller
+            control={control}
+            name="showStopped"
+            render={({ field }) => (
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={field.value ?? false}
+                    onChange={field.onChange}
+                  />
+                }
+                label="Show stopped containers"
+                {...field}
+              />
+            )}
+          />
+          <Controller
+            control={control}
+            name="composeProject"
+            render={({ field }) => (
+              <FormControl fullWidth>
+                <InputLabel id="compose-project-select-label">
+                  Compose project
+                </InputLabel>
+                <Select
+                  labelId="compose-project-select-label"
+                  id="compose-project-select"
+                  label="Compose project"
+                  {...field}
+                >
+                  <MenuItem value="">&nbsp;</MenuItem>
+                  <MenuItem value="nginx">nginx</MenuItem>
+                </Select>
+              </FormControl>
+            )}
+          />
         </FormGroup>
       </form>
     </div>
   );
 }
-
 
 const getDefaultHiddenColumns = <T extends string>(
   columns: ColumnDefinition<T>[],
@@ -150,6 +162,7 @@ function ExpandableTable<T extends string>({
     useState<GridColumnVisibilityModel>({});
   const [selectedRow, setSelectedRow] = useState<RowDefinition<T> | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [filters, setFilters] = useState<Record<string, string | boolean>>({});
 
   const expandRow = (row: RowDefinition<T>) => {
     setSelectedRow(row);
@@ -261,13 +274,17 @@ function ExpandableTable<T extends string>({
         // and sets the columns for the breakpoint
         showToolbar
         disableDensitySelector
-        slots={{ toolbar: CustomToolbar, filterPanel: CustomFilterPanel }}
-      // slotProps={{
-      //   toolbar: {
-      //     printOptions: { disableToolbarButton: true },
-      //     csvOptions: { disableToolbarButton: true },
-      //   },
-      // }}
+        slots={{ filterPanel: CustomFilterPanel }}
+        slotProps={{
+          toolbar: {
+            printOptions: { disableToolbarButton: true },
+            csvOptions: { disableToolbarButton: true },
+          },
+          filterPanel: {
+            filters,
+            setFilters,
+          },
+        }}
       />
 
       {/* Expandable rows in a data grid is a Pro feature so implement this popout draw for now */}
@@ -292,4 +309,3 @@ function ExpandableTable<T extends string>({
 }
 
 export default ExpandableTable;
-
