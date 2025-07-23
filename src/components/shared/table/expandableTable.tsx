@@ -113,7 +113,7 @@ function CustomFilterPanel<T extends string>({ filterValues, setFilterValues, fi
       <form>
         <FormGroup className="flex-column" style={{ gap: "1em" }}>
           {
-            // TODO dont show the button if theres no filters
+            // TODO dont show the button if theres no filterDefinitions
             filterDefinitions?.map(filterDefinition => (
               <Controller
                 key={filterDefinition.name}
@@ -182,12 +182,12 @@ function ExpandableTable<T extends string>({
   columns,
   rows,
   columnsToHide,
-  filters
+  filterDefinitions
 }: {
   columns: ColumnDefinition<T>[];
   rows: RowDefinition<T>[];
   columnsToHide?: ColumnsToHideAtBreakpoint<T>;
-  filters?: FilterDefinition<T>[];
+  filterDefinitions?: FilterDefinition<T>[];
 }) {
   const screenBreakpoint = useBreakpoints();
 
@@ -195,7 +195,7 @@ function ExpandableTable<T extends string>({
   const [selectedRow, setSelectedRow] = useState<RowDefinition<T> | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [filterValues, setFilterValues] = useState<Record<string, FilterFormValue>>(
-    filters?.reduce((acc, filter) => ({ ...acc, [filter.name]: filter.default }), {}) ?? {});
+    filterDefinitions?.reduce((acc, filter) => ({ ...acc, [filter.name]: filter.default }), {}) ?? {});
 
   const expandRow = (row: RowDefinition<T>) => {
     setSelectedRow(row);
@@ -293,14 +293,14 @@ function ExpandableTable<T extends string>({
   };
 
   const getFilteredRowData = useMemo(() => {
-    return filters ? rows.filter(
-      row => filters.every(filter => (filter.predicate as FilterPredicate<FilterFormValue>)(filterValues[filter.name], row[filter.field]))
+    return filterDefinitions ? rows.filter(
+      row => filterDefinitions.every(filter => (filter.predicate as FilterPredicate<FilterFormValue>)(filterValues[filter.name], row[filter.field]))
     ) : rows;
   }, [filterValues, rows])
 
   const getSelectFilterOptions = useMemo(() => {
     const selectFilterOptions: Partial<Record<T, Set<RowValue>>> = {};
-    const columnsWithSelectFilter = filters?.filter(filter => filter.type === "select").map(filter => filter.field) ?? []
+    const columnsWithSelectFilter = filterDefinitions?.filter(filter => filter.type === "select").map(filter => filter.field) ?? []
 
     for (const column of columnsWithSelectFilter) {
       selectFilterOptions[column] = new Set(rows.map(row => row[column]));
@@ -309,10 +309,10 @@ function ExpandableTable<T extends string>({
     return selectFilterOptions;
   }, [])
 
-  const filterPanel: FilterPanelProps<T> = {
+  const filterPanelProps: FilterPanelProps<T> = {
     filterValues,
     setFilterValues,
-    filterDefinitions: filters,
+    filterDefinitions: filterDefinitions,
     selectOptions: getSelectFilterOptions,
   }
 
@@ -337,7 +337,7 @@ function ExpandableTable<T extends string>({
             printOptions: { disableToolbarButton: true },
             csvOptions: { disableToolbarButton: true },
           },
-          filterPanel: filterPanel
+          filterPanel: filterPanelProps
         }}
       />
 

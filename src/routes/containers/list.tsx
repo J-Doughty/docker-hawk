@@ -71,7 +71,7 @@ function RouteComponent() {
                 flex: 1,
               },
             ]}
-            filters={[
+            filterDefinitions={[
               {
                 field: "state",
                 predicate: (filterValue, rowValue) => (filterValue === true || rowValue === "running"),
