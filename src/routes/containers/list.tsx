@@ -74,7 +74,8 @@ function RouteComponent() {
             filterDefinitions={[
               {
                 field: "state",
-                predicate: (filterValue, rowValue) => (filterValue === true || rowValue === "running"),
+                predicate: (filterValue, rowValue) =>
+                  filterValue === true || rowValue === "running",
                 type: "toggle",
                 name: "showStoppedContainers",
                 label: "Show stopped containers",
@@ -82,7 +83,8 @@ function RouteComponent() {
               },
               {
                 field: "composeProject",
-                predicate: (filterValue, rowValue) => (filterValue ? filterValue === rowValue : true),
+                predicate: (filterValue, rowValue) =>
+                  (filterValue ? filterValue === rowValue : true),
                 type: "select",
                 name: "composeProject",
                 label: "Show stopped containers",

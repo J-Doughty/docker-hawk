@@ -2,7 +2,9 @@ import { ReactNode, useEffect, useMemo, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 
 import CloseIcon from "@mui/icons-material/Close";
+import FilterListIcon from "@mui/icons-material/FilterList";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
+import ViewColumnIcon from "@mui/icons-material/ViewColumn";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Drawer from "@mui/material/Drawer";
@@ -14,18 +16,26 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Switch from "@mui/material/Switch";
+import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import {
+  ColumnsPanelTrigger,
   DataGrid,
+  FilterPanelTrigger,
   GridColDef,
   GridColumnVisibilityModel,
   GridRenderCellParams,
+  Toolbar,
+  ToolbarButton,
 } from "@mui/x-data-grid";
 
 import { useBreakpoints } from "../../../hooks/useBreakpoints";
 
+import SearchPanel from "./searchPanel";
+
 import "./expandableTable.css";
 
+// TODO T should be defined from the column values only
 type RowValue = string | number | null | undefined;
 
 type FilterType = "toggle" | "select";
@@ -44,29 +54,27 @@ interface FilterDefinitionBase<T, U> {
   default: U;
 }
 
-interface ToggleFilter<T extends string> extends FilterDefinitionBase<T, boolean> {
+interface ToggleFilter<T extends string>
+  extends FilterDefinitionBase<T, boolean> {
   type: "toggle";
-
 }
 
-interface SelectFilter<T extends string> extends FilterDefinitionBase<T, string> {
+interface SelectFilter<T extends string>
+  extends FilterDefinitionBase<T, string> {
   type: "select";
 }
 
-type FilterDefinition<T extends string> = ToggleFilter<T> | SelectFilter<T>
+type FilterDefinition<T extends string> = ToggleFilter<T> | SelectFilter<T>;
 
 // These types were created partially from https://github.com/mui/mui-x/issues/4623
 type ColumnField<T extends string> = T | "expand";
 
 type ColumnDefinition<T extends string> = GridColDef & {
   field: ColumnField<T>;
-  filter?: FilterDefinition<T>
+  filter?: FilterDefinition<T>;
 };
 
-type RowDefinition<T extends string> = Record<
-  T,
-  RowValue
-> & {
+type RowDefinition<T extends string> = Record<T, RowValue> & {
   id: number | string;
   expanded: {
     title: string;
@@ -88,16 +96,49 @@ interface FilterPanelProps<T extends string> {
   setFilterValues: React.Dispatch<
     React.SetStateAction<Record<string, FilterFormValue>>
   >;
-  filterDefinitions: FilterDefinition<T>[] | undefined
+  filterDefinitions: FilterDefinition<T>[] | undefined;
   selectOptions: Partial<Record<T, Set<RowValue>>>;
 }
 
-declare module "@mui/x-data-grid" {
-  interface FilterPanelPropsOverrides extends FilterPanelProps<string> { }
+interface ToolbarProps {
+  showFiltersButton: boolean;
 }
 
+declare module "@mui/x-data-grid" {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  interface FilterPanelPropsOverrides extends FilterPanelProps<string> {}
 
-function CustomFilterPanel<T extends string>({ filterValues, setFilterValues, filterDefinitions, selectOptions }: FilterPanelProps<T>) {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
+  interface ToolbarPropsOverrides extends ToolbarProps {}
+}
+
+function CustomToolbar({ showFiltersButton = true }: ToolbarProps) {
+  return (
+    <Toolbar>
+      <Tooltip title="Columns">
+        <ColumnsPanelTrigger render={<ToolbarButton />}>
+          <ViewColumnIcon fontSize="small" />
+        </ColumnsPanelTrigger>
+      </Tooltip>
+      {showFiltersButton && (
+        <Tooltip title="Filters">
+          <FilterPanelTrigger render={<ToolbarButton />}>
+            <FilterListIcon fontSize="small" />
+          </FilterPanelTrigger>
+        </Tooltip>
+      )}
+
+      <SearchPanel />
+    </Toolbar>
+  );
+}
+
+function CustomFilterPanel<T extends string>({
+  filterValues,
+  setFilterValues,
+  filterDefinitions,
+  selectOptions,
+}: FilterPanelProps<T>) {
   const { control } = useForm<typeof filterValues>({
     values: filterValues,
   });
@@ -112,43 +153,45 @@ function CustomFilterPanel<T extends string>({ filterValues, setFilterValues, fi
       <h3 style={{ padding: 0, marginTop: 0 }}>Filters</h3>
       <form>
         <FormGroup className="flex-column" style={{ gap: "1em" }}>
-          {
-            // TODO dont show the button if theres no filterDefinitions
-            filterDefinitions?.map(filterDefinition => (
-              <Controller
-                key={filterDefinition.name}
-                control={control}
-                name={filterDefinition.name}
-                render={({ field }) => (
-                  filterDefinition.type === "toggle" ? (
-                    <FormControlLabel
-                      control={
-                        <Switch
-                          checked={field.value as boolean | undefined ?? false}
-                          onChange={field.onChange}
-                        />
-                      }
-                      label={filterDefinition.label}
-                      {...field}
-                    />
-                  ) : (
-                    <FormControl fullWidth>
-                      <InputLabel id="compose-project-select-label">
-                        Compose project
-                      </InputLabel>
-                      <Select
-                        label={filterDefinition.label}
-                        {...field}
-                      >
-                        <MenuItem value="">&nbsp;</MenuItem>
-                        {Array.from(selectOptions[filterDefinition.field] ?? []).filter(option => option !== null || option !== undefined).map(option => (
-                          <MenuItem key={option} value={option?.toString()}>{option}</MenuItem>
+          {filterDefinitions?.map((filterDefinition) => (
+            <Controller
+              key={filterDefinition.name}
+              control={control}
+              name={filterDefinition.name}
+              render={({ field }) =>
+                (filterDefinition.type === "toggle" ? (
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={(field.value as boolean | undefined) ?? false}
+                        onChange={field.onChange}
+                      />
+                    }
+                    label={filterDefinition.label}
+                    {...field}
+                  />
+                ) : (
+                  <FormControl fullWidth>
+                    <InputLabel id="compose-project-select-label">
+                      Compose project
+                    </InputLabel>
+                    <Select label={filterDefinition.label} {...field}>
+                      <MenuItem value="">&nbsp;</MenuItem>
+                      {Array.from(selectOptions[filterDefinition.field] ?? [])
+                        .filter(
+                          (option) => option !== null || option !== undefined,
+                        )
+                        .map((option) => (
+                          <MenuItem key={option} value={option?.toString()}>
+                            {option}
+                          </MenuItem>
                         ))}
-                      </Select>
-                    </FormControl>
-                  )
-                )
-                } />))}
+                    </Select>
+                  </FormControl>
+                ))
+              }
+            />
+          ))}
         </FormGroup>
       </form>
     </div>
@@ -182,7 +225,7 @@ function ExpandableTable<T extends string>({
   columns,
   rows,
   columnsToHide,
-  filterDefinitions
+  filterDefinitions,
 }: {
   columns: ColumnDefinition<T>[];
   rows: RowDefinition<T>[];
@@ -191,11 +234,18 @@ function ExpandableTable<T extends string>({
 }) {
   const screenBreakpoint = useBreakpoints();
 
-  const [userSetColumns, setUserSetColumns] = useState<GridColumnVisibilityModel>({});
+  const [userSetColumns, setUserSetColumns] =
+    useState<GridColumnVisibilityModel>({});
   const [selectedRow, setSelectedRow] = useState<RowDefinition<T> | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [filterValues, setFilterValues] = useState<Record<string, FilterFormValue>>(
-    filterDefinitions?.reduce((acc, filter) => ({ ...acc, [filter.name]: filter.default }), {}) ?? {});
+  const [filterValues, setFilterValues] = useState<
+    Record<string, FilterFormValue>
+  >(
+    filterDefinitions?.reduce(
+      (acc, filter) => ({ ...acc, [filter.name]: filter.default }),
+      {},
+    ) ?? {},
+  );
 
   const expandRow = (row: RowDefinition<T>) => {
     setSelectedRow(row);
@@ -228,7 +278,7 @@ function ExpandableTable<T extends string>({
         </div>
       ),
     },
-    ...columns
+    ...columns,
   ];
 
   const computedVisibility = useMemo(() => {
@@ -292,29 +342,41 @@ function ExpandableTable<T extends string>({
     });
   };
 
-  const getFilteredRowData = useMemo(() => {
-    return filterDefinitions ? rows.filter(
-      row => filterDefinitions.every(filter => (filter.predicate as FilterPredicate<FilterFormValue>)(filterValues[filter.name], row[filter.field]))
-    ) : rows;
-  }, [filterValues, rows])
+  const getFilteredRowData = useMemo(
+    () =>
+      (filterDefinitions
+        ? rows.filter((row) =>
+            filterDefinitions.every((filter) =>
+              (filter.predicate as FilterPredicate<FilterFormValue>)(
+                filterValues[filter.name],
+                row[filter.field],
+              ),
+            ),
+          )
+        : rows),
+    [filterValues, rows],
+  );
 
   const getSelectFilterOptions = useMemo(() => {
     const selectFilterOptions: Partial<Record<T, Set<RowValue>>> = {};
-    const columnsWithSelectFilter = filterDefinitions?.filter(filter => filter.type === "select").map(filter => filter.field) ?? []
+    const columnsWithSelectFilter =
+      filterDefinitions
+        ?.filter((filter) => filter.type === "select")
+        .map((filter) => filter.field) ?? [];
 
     for (const column of columnsWithSelectFilter) {
-      selectFilterOptions[column] = new Set(rows.map(row => row[column]));
+      selectFilterOptions[column] = new Set(rows.map((row) => row[column]));
     }
 
     return selectFilterOptions;
-  }, [])
+  }, []);
 
   const filterPanelProps: FilterPanelProps<T> = {
     filterValues,
     setFilterValues,
-    filterDefinitions: filterDefinitions,
+    filterDefinitions,
     selectOptions: getSelectFilterOptions,
-  }
+  };
 
   return (
     <div style={{ maxHeight: "100%", width: "100%", overflow: "auto" }}>
@@ -331,13 +393,14 @@ function ExpandableTable<T extends string>({
         // and sets the columns for the breakpoint
         showToolbar
         disableDensitySelector
-        slots={{ filterPanel: CustomFilterPanel }}
+        slots={{ toolbar: CustomToolbar, filterPanel: CustomFilterPanel }}
         slotProps={{
           toolbar: {
-            printOptions: { disableToolbarButton: true },
-            csvOptions: { disableToolbarButton: true },
+            showFiltersButton:
+              filterDefinitions !== undefined &&
+              filterDefinitions?.length !== 0,
           },
-          filterPanel: filterPanelProps
+          filterPanel: filterPanelProps,
         }}
       />
 
