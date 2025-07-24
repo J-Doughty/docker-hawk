@@ -1,86 +1,35 @@
-import { ReactNode, useEffect, useMemo, useState } from "react";
-import { Controller, useForm, useWatch } from "react-hook-form";
+import { useMemo, useState } from "react";
 
 import CloseIcon from "@mui/icons-material/Close";
-import FilterListIcon from "@mui/icons-material/FilterList";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import ViewColumnIcon from "@mui/icons-material/ViewColumn";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Drawer from "@mui/material/Drawer";
-import FormControl from "@mui/material/FormControl";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormGroup from "@mui/material/FormGroup";
 import IconButton from "@mui/material/IconButton";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import Switch from "@mui/material/Switch";
-import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import {
-  ColumnsPanelTrigger,
   DataGrid,
-  FilterPanelTrigger,
-  GridColDef,
   GridColumnVisibilityModel,
   GridRenderCellParams,
-  Toolbar,
-  ToolbarButton,
 } from "@mui/x-data-grid";
 
 import { useBreakpoints } from "../../../hooks/useBreakpoints";
 
-import SearchPanel from "./searchPanel";
+import FilterPanel, { FilterPanelProps } from "./filterPanel";
+import TableToolbar, { TableToolbarProps } from "./tableToolbar";
+import {
+  ColumnDefinition,
+  ColumnField,
+  FilterDefinition,
+  FilterFormValue,
+  FilterPredicate,
+  RowDefinition,
+  RowValue,
+} from "./types";
 
 import "./expandableTable.css";
 
 // TODO T should be defined from the column values only
-type RowValue = string | number | null | undefined;
-
-type FilterType = "toggle" | "select";
-
-type FilterFormValue = string | boolean | undefined;
-
-type FilterPredicate<U> = (filterValue: U, rowValue: RowValue) => boolean;
-
-interface FilterDefinitionBase<T, U> {
-  // TODO i think we should pass in the full row instead of just the field on that row
-  field: T;
-  predicate: FilterPredicate<U>;
-  type: FilterType;
-  name: string;
-  label: string;
-  default: U;
-}
-
-interface ToggleFilter<T extends string>
-  extends FilterDefinitionBase<T, boolean> {
-  type: "toggle";
-}
-
-interface SelectFilter<T extends string>
-  extends FilterDefinitionBase<T, string> {
-  type: "select";
-}
-
-type FilterDefinition<T extends string> = ToggleFilter<T> | SelectFilter<T>;
-
-// These types were created partially from https://github.com/mui/mui-x/issues/4623
-type ColumnField<T extends string> = T | "expand";
-
-type ColumnDefinition<T extends string> = GridColDef & {
-  field: ColumnField<T>;
-  filter?: FilterDefinition<T>;
-};
-
-type RowDefinition<T extends string> = Record<T, RowValue> & {
-  id: number | string;
-  expanded: {
-    title: string;
-    body: ReactNode;
-  };
-};
 
 interface ColumnsToHideAtBreakpoint<T extends string> {
   xs?: ColumnField<T>[];
@@ -90,112 +39,12 @@ interface ColumnsToHideAtBreakpoint<T extends string> {
   xl?: ColumnField<T>[];
 }
 
-interface FilterPanelProps<T extends string> {
-  // TODO improve typing here
-  filterValues: Record<string, FilterFormValue>;
-  setFilterValues: React.Dispatch<
-    React.SetStateAction<Record<string, FilterFormValue>>
-  >;
-  filterDefinitions: FilterDefinition<T>[] | undefined;
-  selectOptions: Partial<Record<T, Set<RowValue>>>;
-}
-
-interface ToolbarProps {
-  showFiltersButton: boolean;
-}
-
 declare module "@mui/x-data-grid" {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   interface FilterPanelPropsOverrides extends FilterPanelProps<string> {}
 
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface ToolbarPropsOverrides extends ToolbarProps {}
-}
-
-function CustomToolbar({ showFiltersButton = true }: ToolbarProps) {
-  return (
-    <Toolbar>
-      <Tooltip title="Columns">
-        <ColumnsPanelTrigger render={<ToolbarButton />}>
-          <ViewColumnIcon fontSize="small" />
-        </ColumnsPanelTrigger>
-      </Tooltip>
-      {showFiltersButton && (
-        <Tooltip title="Filters">
-          <FilterPanelTrigger render={<ToolbarButton />}>
-            <FilterListIcon fontSize="small" />
-          </FilterPanelTrigger>
-        </Tooltip>
-      )}
-
-      <SearchPanel />
-    </Toolbar>
-  );
-}
-
-function CustomFilterPanel<T extends string>({
-  filterValues,
-  setFilterValues,
-  filterDefinitions,
-  selectOptions,
-}: FilterPanelProps<T>) {
-  const { control } = useForm<typeof filterValues>({
-    values: filterValues,
-  });
-  const watchForm = useWatch({ control });
-
-  useEffect(() => {
-    setFilterValues(watchForm);
-  }, [watchForm]);
-
-  return (
-    <div style={{ padding: "1em 2em" }}>
-      <h3 style={{ padding: 0, marginTop: 0 }}>Filters</h3>
-      <form>
-        <FormGroup className="flex-column" style={{ gap: "1em" }}>
-          {filterDefinitions?.map((filterDefinition) => (
-            <Controller
-              key={filterDefinition.name}
-              control={control}
-              name={filterDefinition.name}
-              render={({ field }) =>
-                (filterDefinition.type === "toggle" ? (
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={(field.value as boolean | undefined) ?? false}
-                        onChange={field.onChange}
-                      />
-                    }
-                    label={filterDefinition.label}
-                    {...field}
-                  />
-                ) : (
-                  <FormControl fullWidth>
-                    <InputLabel id="compose-project-select-label">
-                      Compose project
-                    </InputLabel>
-                    <Select label={filterDefinition.label} {...field}>
-                      <MenuItem value="">&nbsp;</MenuItem>
-                      {Array.from(selectOptions[filterDefinition.field] ?? [])
-                        .filter(
-                          (option) => option !== null || option !== undefined,
-                        )
-                        .map((option) => (
-                          <MenuItem key={option} value={option?.toString()}>
-                            {option}
-                          </MenuItem>
-                        ))}
-                    </Select>
-                  </FormControl>
-                ))
-              }
-            />
-          ))}
-        </FormGroup>
-      </form>
-    </div>
-  );
+  interface ToolbarPropsOverrides extends TableToolbarProps {}
 }
 
 const getDefaultHiddenColumns = <T extends string>(
@@ -393,7 +242,7 @@ function ExpandableTable<T extends string>({
         // and sets the columns for the breakpoint
         showToolbar
         disableDensitySelector
-        slots={{ toolbar: CustomToolbar, filterPanel: CustomFilterPanel }}
+        slots={{ toolbar: TableToolbar, filterPanel: FilterPanel }}
         slotProps={{
           toolbar: {
             showFiltersButton:
