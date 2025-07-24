@@ -52,3 +52,11 @@ export type RowDefinition<T extends string> = Record<T, RowValue> & {
     body: ReactNode;
   };
 };
+
+export interface ColumnsToHideAtBreakpoint<T extends string> {
+  xs?: ColumnField<T>[];
+  sm?: ColumnField<T>[];
+  md?: ColumnField<T>[];
+  lg?: ColumnField<T>[];
+  xl?: ColumnField<T>[];
+}
