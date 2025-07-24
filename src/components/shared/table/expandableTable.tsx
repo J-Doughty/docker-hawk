@@ -26,6 +26,7 @@ import {
 } from "./types";
 
 import "./expandableTable.css";
+import { useExpandTableRow } from "./hooks/useExpandTableRow";
 
 // TODO T should be defined from the column values only
 
@@ -39,10 +40,10 @@ interface ColumnsToHideAtBreakpoint<T extends string> {
 
 declare module "@mui/x-data-grid" {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface FilterPanelPropsOverrides extends FilterPanelProps<string> {}
+  interface FilterPanelPropsOverrides extends FilterPanelProps<string> { }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface ToolbarPropsOverrides extends TableToolbarProps {}
+  interface ToolbarPropsOverrides extends TableToolbarProps { }
 }
 
 const getDefaultHiddenColumns = <T extends string>(
@@ -83,8 +84,8 @@ function ExpandableTable<T extends string>({
 
   const [userSetColumns, setUserSetColumns] =
     useState<GridColumnVisibilityModel>({});
-  const [selectedRow, setSelectedRow] = useState<RowDefinition<T> | null>(null);
-  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const { expandedRow, expandRow, collapseRow } = useExpandTableRow();
   const {
     filterValues,
     setFilterValues,
@@ -94,16 +95,6 @@ function ExpandableTable<T extends string>({
     filterDefinitions: filterDefinitions ?? [],
     rows,
   });
-
-  const expandRow = (row: RowDefinition<T>) => {
-    setSelectedRow(row);
-    setDrawerOpen(true);
-  };
-
-  const collapseRow = () => {
-    setDrawerOpen(false);
-    setSelectedRow(null);
-  };
 
   columns = [
     {
@@ -225,19 +216,19 @@ function ExpandableTable<T extends string>({
 
       {/* Expandable rows in a data grid is a Pro feature so implement this popout draw for now */}
       {/* The premium model also supports grouping rows which may be useful for compose project */}
-      <Drawer anchor="right" open={drawerOpen} onClose={collapseRow}>
+      <Drawer anchor="right" open={expandedRow !== null} onClose={collapseRow}>
         <Box sx={{ width: 300, p: 2 }}>
           <Box
             display="flex"
             justifyContent="space-between"
             alignItems="center"
           >
-            <Typography variant="h6">{selectedRow?.expanded.title}</Typography>
+            <Typography variant="h6">{expandedRow?.expanded.title}</Typography>
             <IconButton onClick={collapseRow}>
               <CloseIcon />
             </IconButton>
           </Box>
-          {selectedRow && <Box mt={2}>{selectedRow.expanded.body}</Box>}
+          {expandedRow && <Box mt={2}>{expandedRow.expanded.body}</Box>}
         </Box>
       </Drawer>
     </div>
