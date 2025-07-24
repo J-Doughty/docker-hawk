@@ -34,7 +34,7 @@ function FilterPanel<T extends string>({
   }, [watchForm]);
 
   return (
-    <div style={{ padding: "1em 2em" }}>
+    <div style={{ padding: "1em 2em", maxHeight: "calc(100vh - 200px)" }}>
       <h3 style={{ padding: 0, marginTop: 0 }}>Filters</h3>
       <form>
         <FormGroup className="flex-column" style={{ gap: "1em" }}>

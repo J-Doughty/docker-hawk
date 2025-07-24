@@ -24,10 +24,10 @@ import "./expandableTable.css";
 
 declare module "@mui/x-data-grid" {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface FilterPanelPropsOverrides extends FilterPanelProps<string> { }
+  interface FilterPanelPropsOverrides extends FilterPanelProps<string> {}
 
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface ToolbarPropsOverrides extends TableToolbarProps { }
+  interface ToolbarPropsOverrides extends TableToolbarProps {}
 }
 
 function ExpandableTable<T extends string>({
