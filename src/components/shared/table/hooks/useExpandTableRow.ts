@@ -1,11 +1,11 @@
 import { useState } from "react";
 
-import { RowDefinition } from "../types";
+import { RowData } from "../types";
 
 export const useExpandTableRow = <T extends string>() => {
-  const [expandedRow, setExpandedRow] = useState<RowDefinition<T> | null>(null);
+  const [expandedRow, setExpandedRow] = useState<RowData<T> | null>(null);
 
-  const expandRow = (row: RowDefinition<T>) => {
+  const expandRow = (row: RowData<T>) => {
     setExpandedRow(row);
   };
 

@@ -16,7 +16,7 @@ import {
   ColumnDefinition,
   ColumnsToHideAtBreakpoint,
   FilterDefinition,
-  RowDefinition,
+  RowData,
 } from "./types";
 
 import "./expandableTable.css";
@@ -38,7 +38,7 @@ function ExpandableTable<T extends string>({
   filterDefinitions,
 }: {
   columns: ColumnDefinition<T>[];
-  rows: RowDefinition<T>[];
+  rows: RowData<T>[];
   columnsToHide?: ColumnsToHideAtBreakpoint<T>;
   filterDefinitions?: FilterDefinition<T>[];
 }) {
@@ -67,7 +67,7 @@ function ExpandableTable<T extends string>({
       cellClassName: "p-0",
       hideable: false,
       filterable: false,
-      renderCell: (params: GridRenderCellParams<RowDefinition<T>>) => (
+      renderCell: (params: GridRenderCellParams<RowData<T>>) => (
         <div className="flex-column align-center justify-center h-100 w-100">
           <Button
             variant="text"

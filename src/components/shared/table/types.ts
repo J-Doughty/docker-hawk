@@ -10,15 +10,13 @@ export type FilterFormValue = string | boolean | undefined;
 
 export type FilterForm = Record<string, FilterFormValue>;
 
-export type FilterPredicate<U> = (
+export type FilterPredicate<T extends string, U> = (
   filterValue: U,
-  rowValue: RowValue,
+  rowData: RowData<T>,
 ) => boolean;
 
-interface FilterDefinitionBase<T, U> {
-  // TODO i think we should pass in the full row instead of just the field on that row
-  field: T;
-  predicate: FilterPredicate<U>;
+interface FilterDefinitionBase<T extends string, U> {
+  predicate: FilterPredicate<T, U>;
   type: FilterType;
   name: string;
   label: string;
@@ -32,6 +30,8 @@ interface ToggleFilter<T extends string>
 
 interface SelectFilter<T extends string>
   extends FilterDefinitionBase<T, string> {
+  // TODO you might want to supply your own values for a dropdown instead of using the field
+  field: T;
   type: "select";
 }
 
@@ -47,7 +47,7 @@ export type ColumnDefinition<T extends string> = GridColDef & {
   filter?: FilterDefinition<T>;
 };
 
-export type RowDefinition<T extends string> = Record<T, RowValue> & {
+export type RowData<T extends string> = Record<T, RowValue> & {
   id: number | string;
   expanded: {
     title: string;

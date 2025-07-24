@@ -5,7 +5,7 @@ import {
   FilterForm,
   FilterFormValue,
   FilterPredicate,
-  RowDefinition,
+  RowData,
   RowValue,
 } from "../types";
 
@@ -22,7 +22,7 @@ export const useTableFilters = <T extends string>({
   rows,
 }: {
   filterDefinitions: FilterDefinition<T>[];
-  rows: RowDefinition<T>[];
+  rows: RowData<T>[];
 }) => {
   const setInitialFilterValues = useMemo(
     () => getFilterFormDefaults(filterDefinitions),
@@ -38,9 +38,9 @@ export const useTableFilters = <T extends string>({
       (filterValues
         ? rows.filter((row) =>
             filterDefinitions.every((filter) =>
-              (filter.predicate as FilterPredicate<FilterFormValue>)(
+              (filter.predicate as FilterPredicate<T, FilterFormValue>)(
                 filterValues[filter.name],
-                row[filter.field],
+                row,
               ),
             ),
           )
