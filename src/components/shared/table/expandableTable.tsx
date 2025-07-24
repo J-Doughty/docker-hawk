@@ -16,19 +16,18 @@ import {
   ColumnDefinition,
   ColumnsToHideAtBreakpoint,
   FilterDefinition,
+  InferColumnFields,
   RowData,
 } from "./types";
 
 import "./expandableTable.css";
 
-// TODO T should be defined from the column values only
-
 declare module "@mui/x-data-grid" {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface FilterPanelPropsOverrides extends FilterPanelProps<string> {}
+  interface FilterPanelPropsOverrides extends FilterPanelProps<string> { }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface ToolbarPropsOverrides extends TableToolbarProps {}
+  interface ToolbarPropsOverrides extends TableToolbarProps { }
 }
 
 function ExpandableTable<T extends string>({
@@ -38,10 +37,12 @@ function ExpandableTable<T extends string>({
   filterDefinitions,
 }: {
   columns: ColumnDefinition<T>[];
-  rows: RowData<T>[];
-  columnsToHide?: ColumnsToHideAtBreakpoint<T>;
-  filterDefinitions?: FilterDefinition<T>[];
+  rows: RowData<InferColumnFields<typeof columns>>[];
+  columnsToHide?: ColumnsToHideAtBreakpoint<InferColumnFields<typeof columns>>;
+  filterDefinitions?: FilterDefinition<InferColumnFields<typeof columns>>[];
 }) {
+  type ColumnFields = InferColumnFields<typeof columns>;
+
   const { expandedRow, expandRow, collapseRow } = useExpandTableRow();
   const {
     filterValues,
@@ -52,12 +53,14 @@ function ExpandableTable<T extends string>({
     filterDefinitions: filterDefinitions ?? [],
     rows,
   });
+
   const { onColumnVisibilityModelChange, computedVisibility } =
     useManageTableColumns({
       columns: columns ?? [],
       columnsToHide: columnsToHide ?? {},
     });
 
+  // TODO should be using actions for this? https://mui.com/x/react-data-grid/column-definition/
   columns = [
     {
       field: "expand",
@@ -67,7 +70,7 @@ function ExpandableTable<T extends string>({
       cellClassName: "p-0",
       hideable: false,
       filterable: false,
-      renderCell: (params: GridRenderCellParams<RowData<T>>) => (
+      renderCell: (params: GridRenderCellParams<RowData<ColumnFields>>) => (
         <div className="flex-column align-center justify-center h-100 w-100">
           <Button
             variant="text"
@@ -82,7 +85,7 @@ function ExpandableTable<T extends string>({
     ...columns,
   ];
 
-  const filterPanelProps: FilterPanelProps<T> = {
+  const filterPanelProps: FilterPanelProps<ColumnFields> = {
     filterValues,
     setFilterValues,
     filterDefinitions,

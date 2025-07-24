@@ -40,12 +40,18 @@ export type FilterDefinition<T extends string> =
   | SelectFilter<T>;
 
 // These types were created partially from https://github.com/mui/mui-x/issues/4623
-export type ColumnField<T extends string> = T | "expand";
+type CustomColumnField = "expand";
+
+export type ColumnField<T extends string> = T | CustomColumnField;
 
 export type ColumnDefinition<T extends string> = GridColDef & {
   field: ColumnField<T>;
-  filter?: FilterDefinition<T>;
 };
+
+export type InferColumnFields<T extends ColumnDefinition<string>[]> = Exclude<
+  T[number]["field"],
+  CustomColumnField
+>;
 
 export type RowData<T extends string> = Record<T, RowValue> & {
   id: number | string;
