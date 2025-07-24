@@ -9,14 +9,11 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Switch from "@mui/material/Switch";
 
-import { FilterDefinition, FilterFormValue, RowValue } from "./types";
+import { FilterDefinition, FilterForm, RowValue } from "./types";
 
 export interface FilterPanelProps<T extends string> {
-  // TODO improve typing here
-  filterValues: Record<string, FilterFormValue>;
-  setFilterValues: React.Dispatch<
-    React.SetStateAction<Record<string, FilterFormValue>>
-  >;
+  filterValues: FilterForm;
+  setFilterValues: React.Dispatch<React.SetStateAction<FilterForm>>;
   filterDefinitions: FilterDefinition<T>[] | undefined;
   selectOptions: Partial<Record<T, Set<RowValue>>>;
 }

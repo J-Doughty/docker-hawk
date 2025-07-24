@@ -43,7 +43,6 @@ export const useManageTableColumns = <T extends string>({
 
   const computedVisibility = useMemo(() => {
     const columnVisibility: GridColumnVisibilityModel = {};
-    // TODO memoize this call
     const defaultColumnVisibilityModel = getDefaultHiddenColumns(
       columns,
       screenBreakpoint,

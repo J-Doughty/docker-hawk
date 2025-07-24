@@ -8,6 +8,8 @@ type FilterType = "toggle" | "select";
 
 export type FilterFormValue = string | boolean | undefined;
 
+export type FilterForm = Record<string, FilterFormValue>;
+
 export type FilterPredicate<U> = (
   filterValue: U,
   rowValue: RowValue,

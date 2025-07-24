@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 
 import {
   FilterDefinition,
+  FilterForm,
   FilterFormValue,
   FilterPredicate,
   RowDefinition,
@@ -28,9 +29,9 @@ export const useTableFilters = <T extends string>({
     [],
   );
 
-  const [filterValues, setFilterValues] = useState<
-    Record<string, FilterFormValue>
-  >(setInitialFilterValues);
+  const [filterValues, setFilterValues] = useState<FilterForm>(
+    setInitialFilterValues,
+  );
 
   const filteredRowData = useMemo(
     () =>
