@@ -38,7 +38,6 @@ export type FilterDefinition<T extends string> =
   | SelectFilter<T>;
 
 // These types were created partially from https://github.com/mui/mui-x/issues/4623
-// TODO renmae some of these
 export type ColumnField<T extends string> = T | "expand";
 
 export type ColumnDefinition<T extends string> = GridColDef & {

@@ -15,16 +15,14 @@ import {
 
 import { useBreakpoints } from "../../../hooks/useBreakpoints";
 
+import { useTableFilters } from "./hooks/useTableFilters";
 import FilterPanel, { FilterPanelProps } from "./filterPanel";
 import TableToolbar, { TableToolbarProps } from "./tableToolbar";
 import {
   ColumnDefinition,
   ColumnField,
   FilterDefinition,
-  FilterFormValue,
-  FilterPredicate,
   RowDefinition,
-  RowValue,
 } from "./types";
 
 import "./expandableTable.css";
@@ -87,14 +85,15 @@ function ExpandableTable<T extends string>({
     useState<GridColumnVisibilityModel>({});
   const [selectedRow, setSelectedRow] = useState<RowDefinition<T> | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [filterValues, setFilterValues] = useState<
-    Record<string, FilterFormValue>
-  >(
-    filterDefinitions?.reduce(
-      (acc, filter) => ({ ...acc, [filter.name]: filter.default }),
-      {},
-    ) ?? {},
-  );
+  const {
+    filterValues,
+    setFilterValues,
+    filteredRowData,
+    selectFilterOptions,
+  } = useTableFilters({
+    filterDefinitions: filterDefinitions ?? [],
+    rows,
+  });
 
   const expandRow = (row: RowDefinition<T>) => {
     setSelectedRow(row);
@@ -191,46 +190,17 @@ function ExpandableTable<T extends string>({
     });
   };
 
-  const getFilteredRowData = useMemo(
-    () =>
-      (filterDefinitions
-        ? rows.filter((row) =>
-            filterDefinitions.every((filter) =>
-              (filter.predicate as FilterPredicate<FilterFormValue>)(
-                filterValues[filter.name],
-                row[filter.field],
-              ),
-            ),
-          )
-        : rows),
-    [filterValues, rows],
-  );
-
-  const getSelectFilterOptions = useMemo(() => {
-    const selectFilterOptions: Partial<Record<T, Set<RowValue>>> = {};
-    const columnsWithSelectFilter =
-      filterDefinitions
-        ?.filter((filter) => filter.type === "select")
-        .map((filter) => filter.field) ?? [];
-
-    for (const column of columnsWithSelectFilter) {
-      selectFilterOptions[column] = new Set(rows.map((row) => row[column]));
-    }
-
-    return selectFilterOptions;
-  }, []);
-
   const filterPanelProps: FilterPanelProps<T> = {
     filterValues,
     setFilterValues,
     filterDefinitions,
-    selectOptions: getSelectFilterOptions,
+    selectOptions: selectFilterOptions,
   };
 
   return (
     <div style={{ maxHeight: "100%", width: "100%", overflow: "auto" }}>
       <DataGrid
-        rows={getFilteredRowData}
+        rows={filteredRowData}
         columns={columns}
         hideFooter
         columnVisibilityModel={computedVisibility}
