@@ -76,7 +76,6 @@ function RouteComponent() {
                   </Typography>
                 ),
               },
-              additionalData: {},
             }))}
           />
         )}

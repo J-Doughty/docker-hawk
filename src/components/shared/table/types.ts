@@ -60,17 +60,24 @@ export type InferColumnFields<T extends ColumnDefinition<string>[]> = Exclude<
   CustomColumnField
 >;
 
-export type RowData<T extends string, U extends AdditionalDataBase> = Record<
-  T,
-  RowValue
-> & {
+type RowDataEntry<T extends string> = Record<T, RowValue> & {
   id: number | string;
   expanded: {
     title: string;
     body: ReactNode;
   };
+};
+
+type RowWithAddtionalData<
+  T extends string,
+  U extends AdditionalDataBase,
+> = RowDataEntry<T> & {
   additionalData: U;
 };
+
+export type RowData<T extends string, U extends AdditionalDataBase> =
+  | RowWithAddtionalData<T, U>
+  | RowDataEntry<T>;
 
 export interface ColumnsToHideAtBreakpoint<T extends string> {
   xs?: ColumnField<T>[];
