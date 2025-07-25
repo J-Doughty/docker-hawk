@@ -47,7 +47,7 @@ export type FilterDefinition<T extends string, U extends AdditionalDataBase> =
   | SelectFilter<T, U>;
 
 // These types were created partially from https://github.com/mui/mui-x/issues/4623
-type CustomColumnField = "expand" | "actions";
+type CustomColumnField = "actions";
 
 export type ColumnField<T extends string> = T | CustomColumnField;
 
