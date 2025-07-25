@@ -3,7 +3,7 @@ interface Port {
   PrivatePort?: number;
 }
 
-enum ContainerSummaryStateEnum {
+export enum ContainerSummaryStateEnum {
   EMPTY = "",
   CREATED = "created",
   RUNNING = "running",

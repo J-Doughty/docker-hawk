@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
 
-import Typography from "@mui/material/Typography";
+import StopIcon from '@mui/icons-material/Stop';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow'; import Typography from "@mui/material/Typography";
+import { GridActionsCellItem } from "@mui/x-data-grid"; import DeleteIcon from '@mui/icons-material/Delete';
 import { createFileRoute } from "@tanstack/react-router";
 import { invoke } from "@tauri-apps/api/core";
 
 import PrimaryPageLayout from "../../components/shared/layout/primaryPageLayout";
 import ExpandableTable from "../../components/shared/table/expandableTable";
-import { ContainerSummary } from "../../types/tauri/commands/docker/ContainerSummary";
+import {
+  ContainerSummary,
+  ContainerSummaryStateEnum,
+} from "../../types/tauri/commands/docker/ContainerSummary";
 
 export const Route = createFileRoute("/containers/list")({
   component: RouteComponent,
@@ -73,8 +78,8 @@ function RouteComponent() {
             ]}
             filterDefinitions={[
               {
-                predicate: (filterValue, rowData) =>
-                  filterValue === true || rowData.state === "running",
+                predicate: (rowData, filterValue) =>
+                  filterValue === true || rowData.additionalData.isRunning,
                 type: "toggle",
                 name: "showStoppedContainers",
                 label: "Show stopped containers",
@@ -82,7 +87,7 @@ function RouteComponent() {
               },
               {
                 field: "composeProject",
-                predicate: (filterValue, rowData) =>
+                predicate: (rowData, filterValue) =>
                   (filterValue ? filterValue === rowData.composeProject : true),
                 type: "select",
                 name: "composeProject",
@@ -90,8 +95,47 @@ function RouteComponent() {
                 default: "",
               },
             ]}
+            actionsWidth={100}
+            getCustomActions={(params) => {
+              const isContainerRunning = params.row.additionalData.isRunning;
+
+              return [
+                <GridActionsCellItem
+                  key={2}
+                  style={{
+                    boxShadow: "none"
+                  }}
+                  icon={
+                    !isContainerRunning ? (<PlayArrowIcon
+                      sx={{
+                        color: "#3f8cb5",
+                      }}
+                    />) : (<StopIcon sx={{
+                      color: "#b5a33f",
+                    }} />)
+                  }
+                  onClick={() => true}
+                  label={isContainerRunning ? "Stop" : "Start"}
+                />,
+                <GridActionsCellItem
+                  key={3}
+                  style={{
+                    boxShadow: "none"
+                  }}
+                  icon={
+                    <DeleteIcon
+                      sx={{
+                        color: "#db4b57",
+                      }}
+                    />
+                  }
+                  onClick={() => true}
+                  label="Delete"
+                />,
+              ];
+            }}
             columnsToHide={{
-              xs: ["image", "state", "containerId"],
+              xs: ["image", "state", "containerId", "status"],
               sm: ["image", "state"],
             }}
             rows={containers.map((container) => ({
@@ -109,6 +153,10 @@ function RouteComponent() {
                     <strong>Name:</strong> {container.Names?.join(", ")}
                   </Typography>
                 ),
+              },
+              additionalData: {
+                isRunning:
+                  container.State === ContainerSummaryStateEnum.RUNNING,
               },
             }))}
           />

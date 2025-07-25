@@ -1,11 +1,14 @@
 import { useState } from "react";
 
-import { RowData } from "../types";
+import { AdditionalDataBase, RowData } from "../types";
 
-export const useExpandTableRow = <T extends string>() => {
-  const [expandedRow, setExpandedRow] = useState<RowData<T> | null>(null);
+export const useExpandTableRow = <
+  T extends string,
+  U extends AdditionalDataBase,
+>() => {
+  const [expandedRow, setExpandedRow] = useState<RowData<T, U> | null>(null);
 
-  const expandRow = (row: RowData<T>) => {
+  const expandRow = (row: RowData<T, U>) => {
     setExpandedRow(row);
   };
 

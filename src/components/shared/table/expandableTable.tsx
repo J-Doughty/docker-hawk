@@ -1,10 +1,17 @@
+import { ReactNode } from "react";
+
 import CloseIcon from "@mui/icons-material/Close";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import { DataGrid, GridActionsCellItem, GridRowParams } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridActionsCellItemProps,
+  GridRowParams,
+} from "@mui/x-data-grid";
 
 import { useExpandTableRow } from "./hooks/useExpandTableRow";
 import { useManageTableColumns } from "./hooks/useMangeTableColumns";
@@ -12,6 +19,7 @@ import { useTableFilters } from "./hooks/useTableFilters";
 import FilterPanel, { FilterPanelProps } from "./filterPanel";
 import TableToolbar, { TableToolbarProps } from "./tableToolbar";
 import {
+  AdditionalDataBase,
   ColumnDefinition,
   ColumnsToHideAtBreakpoint,
   FilterDefinition,
@@ -23,30 +31,41 @@ import "./expandableTable.css";
 
 declare module "@mui/x-data-grid" {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface FilterPanelPropsOverrides extends FilterPanelProps<string> {}
+  interface FilterPanelPropsOverrides extends FilterPanelProps<string> { }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface ToolbarPropsOverrides extends TableToolbarProps {}
+  interface ToolbarPropsOverrides extends TableToolbarProps { }
 }
 
-function ExpandableTable<T extends string>({
+function ExpandableTable<T extends string, U extends AdditionalDataBase>({
   columns,
   rows,
   columnsToHide,
   filterDefinitions,
+  getCustomActions,
+  actionsWidth = 50,
 }: {
   columns: ColumnDefinition<T>[];
-  rows: RowData<T>[];
+  rows: RowData<InferColumnFields<typeof columns>, U>[];
   columnsToHide?: ColumnsToHideAtBreakpoint<InferColumnFields<typeof columns>>;
-  filterDefinitions?: FilterDefinition<InferColumnFields<typeof columns>>[];
+  filterDefinitions?: FilterDefinition<InferColumnFields<typeof columns>, U>[];
+  getCustomActions?: (
+    params: GridRowParams<RowData<InferColumnFields<typeof columns>, U>>,
+  ) => ReactNode[];
+  actionsWidth?: number;
 }) {
-  const { expandedRow, expandRow, collapseRow } = useExpandTableRow();
+  type ColumnField = InferColumnFields<typeof columns>;
+
+  const { expandedRow, expandRow, collapseRow } = useExpandTableRow<
+    ColumnField,
+    U
+  >();
   const {
     filterValues,
     setFilterValues,
     filteredRowData,
     selectFilterOptions,
-  } = useTableFilters<T>({
+  } = useTableFilters<ColumnField, U>({
     filterDefinitions: filterDefinitions ?? [],
     rows,
   });
@@ -59,14 +78,17 @@ function ExpandableTable<T extends string>({
 
   columns = [
     {
-      field: "expand",
+      field: "actions",
       type: "actions",
-      width: 50,
-      cellClassName: "p-0",
+      width: actionsWidth,
       hideable: false,
-      getActions: (params: GridRowParams<RowData<T>>) => [
+      cellClassName: "actions-column",
+      getActions: (params: GridRowParams<RowData<ColumnField, U>>) => [
         <GridActionsCellItem
           key={1}
+          style={{
+            boxShadow: "none"
+          }}
           icon={
             <OpenInFullIcon
               sx={{
@@ -77,12 +99,17 @@ function ExpandableTable<T extends string>({
           onClick={() => expandRow(params.row)}
           label="Expand"
         />,
+        ...(getCustomActions
+          ? (getCustomActions(
+            params,
+          ) as readonly React.ReactElement<GridActionsCellItemProps>[])
+          : []),
       ],
     },
     ...columns,
   ];
 
-  const filterPanelProps: FilterPanelProps<T> = {
+  const filterPanelProps: FilterPanelProps<ColumnField> = {
     filterValues,
     setFilterValues,
     filterDefinitions,

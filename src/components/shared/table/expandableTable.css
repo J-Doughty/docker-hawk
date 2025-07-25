@@ -2,3 +2,11 @@
 .MuiDataGrid-columnsManagement .Mui-disabled {
   display: none;
 }
+
+.actions-column {
+  padding: 0 !important;
+
+  .MuiDataGrid-actionsCell {
+    grid-gap: unset !important;
+  }
+}

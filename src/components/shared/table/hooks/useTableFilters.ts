@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 
 import {
+  AdditionalDataBase,
   FilterDefinition,
   FilterForm,
   FilterFormValue,
@@ -9,20 +10,23 @@ import {
   RowValue,
 } from "../types";
 
-const getFilterFormDefaults = <T extends string>(
-  filterDefinitions: FilterDefinition<T>[],
+const getFilterFormDefaults = <T extends string, U extends AdditionalDataBase>(
+  filterDefinitions: FilterDefinition<T, U>[],
 ) =>
   filterDefinitions?.reduce(
     (acc, filter) => ({ ...acc, [filter.name]: filter.default }),
     {},
   ) ?? {};
 
-export const useTableFilters = <T extends string>({
+export const useTableFilters = <
+  T extends string,
+  U extends AdditionalDataBase,
+>({
   filterDefinitions,
   rows,
 }: {
-  filterDefinitions: FilterDefinition<T>[];
-  rows: RowData<T>[];
+  filterDefinitions: FilterDefinition<T, U>[];
+  rows: RowData<T, U>[];
 }) => {
   const setInitialFilterValues = useMemo(
     () => getFilterFormDefaults(filterDefinitions),
@@ -38,9 +42,9 @@ export const useTableFilters = <T extends string>({
       (filterValues
         ? rows.filter((row) =>
             filterDefinitions.every((filter) =>
-              (filter.predicate as FilterPredicate<T, FilterFormValue>)(
-                filterValues[filter.name],
+              (filter.predicate as FilterPredicate<T, U, FilterFormValue>)(
                 row,
+                filterValues[filter.name],
               ),
             ),
           )
