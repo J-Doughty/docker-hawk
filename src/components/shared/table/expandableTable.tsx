@@ -24,10 +24,10 @@ import "./expandableTable.css";
 
 declare module "@mui/x-data-grid" {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface FilterPanelPropsOverrides extends FilterPanelProps<string> {}
+  interface FilterPanelPropsOverrides extends FilterPanelProps<string> { }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface ToolbarPropsOverrides extends TableToolbarProps {}
+  interface ToolbarPropsOverrides extends TableToolbarProps { }
 }
 
 function ExpandableTable<T extends string>({
@@ -37,19 +37,17 @@ function ExpandableTable<T extends string>({
   filterDefinitions,
 }: {
   columns: ColumnDefinition<T>[];
-  rows: RowData<InferColumnFields<typeof columns>>[];
+  rows: RowData<T>[];
   columnsToHide?: ColumnsToHideAtBreakpoint<InferColumnFields<typeof columns>>;
   filterDefinitions?: FilterDefinition<InferColumnFields<typeof columns>>[];
 }) {
-  type ColumnFields = InferColumnFields<typeof columns>;
-
   const { expandedRow, expandRow, collapseRow } = useExpandTableRow();
   const {
     filterValues,
     setFilterValues,
     filteredRowData,
     selectFilterOptions,
-  } = useTableFilters({
+  } = useTableFilters<T>({
     filterDefinitions: filterDefinitions ?? [],
     rows,
   });
@@ -70,7 +68,7 @@ function ExpandableTable<T extends string>({
       cellClassName: "p-0",
       hideable: false,
       filterable: false,
-      renderCell: (params: GridRenderCellParams<RowData<ColumnFields>>) => (
+      renderCell: (params: GridRenderCellParams<RowData<T>>) => (
         <div className="flex-column align-center justify-center h-100 w-100">
           <Button
             variant="text"
@@ -85,7 +83,7 @@ function ExpandableTable<T extends string>({
     ...columns,
   ];
 
-  const filterPanelProps: FilterPanelProps<ColumnFields> = {
+  const filterPanelProps: FilterPanelProps<T> = {
     filterValues,
     setFilterValues,
     filterDefinitions,
