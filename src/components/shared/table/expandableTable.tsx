@@ -1,11 +1,10 @@
 import CloseIcon from "@mui/icons-material/Close";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import { DataGrid, GridRenderCellParams } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridRowParams } from "@mui/x-data-grid";
 
 import { useExpandTableRow } from "./hooks/useExpandTableRow";
 import { useManageTableColumns } from "./hooks/useMangeTableColumns";
@@ -24,10 +23,10 @@ import "./expandableTable.css";
 
 declare module "@mui/x-data-grid" {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface FilterPanelPropsOverrides extends FilterPanelProps<string> { }
+  interface FilterPanelPropsOverrides extends FilterPanelProps<string> {}
 
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface ToolbarPropsOverrides extends TableToolbarProps { }
+  interface ToolbarPropsOverrides extends TableToolbarProps {}
 }
 
 function ExpandableTable<T extends string>({
@@ -58,27 +57,27 @@ function ExpandableTable<T extends string>({
       columnsToHide: columnsToHide ?? {},
     });
 
-  // TODO should be using actions for this? https://mui.com/x/react-data-grid/column-definition/
   columns = [
     {
       field: "expand",
-      headerName: "",
+      type: "actions",
       width: 50,
-      sortable: false,
       cellClassName: "p-0",
       hideable: false,
-      filterable: false,
-      renderCell: (params: GridRenderCellParams<RowData<T>>) => (
-        <div className="flex-column align-center justify-center h-100 w-100">
-          <Button
-            variant="text"
-            className="h-100 w-100"
-            onClick={() => expandRow(params.row)}
-          >
-            <OpenInFullIcon />
-          </Button>
-        </div>
-      ),
+      getActions: (params: GridRowParams<RowData<T>>) => [
+        <GridActionsCellItem
+          key={1}
+          icon={
+            <OpenInFullIcon
+              sx={{
+                color: "primary.main",
+              }}
+            />
+          }
+          onClick={() => expandRow(params.row)}
+          label="Expand"
+        />,
+      ],
     },
     ...columns,
   ];
