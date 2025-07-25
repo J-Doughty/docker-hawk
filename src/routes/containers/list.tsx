@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 
-import StopIcon from '@mui/icons-material/Stop';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow'; import Typography from "@mui/material/Typography";
-import { GridActionsCellItem } from "@mui/x-data-grid"; import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteIcon from "@mui/icons-material/Delete";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import StopIcon from "@mui/icons-material/Stop";
+import Typography from "@mui/material/Typography";
 import { createFileRoute } from "@tanstack/react-router";
 import { invoke } from "@tauri-apps/api/core";
 
 import PrimaryPageLayout from "../../components/shared/layout/primaryPageLayout";
+import ActionItem from "../../components/shared/table/actionItem";
 import ExpandableTable from "../../components/shared/table/expandableTable";
 import {
   ContainerSummary,
@@ -95,44 +97,29 @@ function RouteComponent() {
                 default: "",
               },
             ]}
-            actionsWidth={100}
-            getCustomActions={(params) => {
-              const isContainerRunning = params.row.additionalData.isRunning;
+            actions={{
+              actionsWidth: 100,
+              getCustomActions: (params) => {
+                const isContainerRunning = params.row.additionalData.isRunning;
 
-              return [
-                <GridActionsCellItem
-                  key={2}
-                  style={{
-                    boxShadow: "none"
-                  }}
-                  icon={
-                    !isContainerRunning ? (<PlayArrowIcon
-                      sx={{
-                        color: "#3f8cb5",
-                      }}
-                    />) : (<StopIcon sx={{
-                      color: "#b5a33f",
-                    }} />)
-                  }
-                  onClick={() => true}
-                  label={isContainerRunning ? "Stop" : "Start"}
-                />,
-                <GridActionsCellItem
-                  key={3}
-                  style={{
-                    boxShadow: "none"
-                  }}
-                  icon={
-                    <DeleteIcon
-                      sx={{
-                        color: "#db4b57",
-                      }}
-                    />
-                  }
-                  onClick={() => true}
-                  label="Delete"
-                />,
-              ];
+                return [
+                  <ActionItem
+                    key={2}
+                    Icon={!isContainerRunning ? PlayArrowIcon : StopIcon}
+                    onClick={() => true}
+                    label={isContainerRunning ? "Stop" : "Start"}
+                    colour={isContainerRunning ? "#3f8cb5" : "#b5a33f"}
+                  />,
+                  <ActionItem
+                    key={3}
+                    Icon={DeleteIcon}
+                    onClick={() => true}
+                    label="Delete"
+                    colour="#db4b57"
+                    isDisabled={params.row.additionalData.isRunning}
+                  />,
+                ];
+              },
             }}
             columnsToHide={{
               xs: ["image", "state", "containerId", "status"],

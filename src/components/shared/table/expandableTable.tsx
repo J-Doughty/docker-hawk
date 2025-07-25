@@ -8,7 +8,6 @@ import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import {
   DataGrid,
-  GridActionsCellItem,
   GridActionsCellItemProps,
   GridRowParams,
 } from "@mui/x-data-grid";
@@ -16,6 +15,7 @@ import {
 import { useExpandTableRow } from "./hooks/useExpandTableRow";
 import { useManageTableColumns } from "./hooks/useMangeTableColumns";
 import { useTableFilters } from "./hooks/useTableFilters";
+import ActionItem from "./actionItem";
 import FilterPanel, { FilterPanelProps } from "./filterPanel";
 import TableToolbar, { TableToolbarProps } from "./tableToolbar";
 import {
@@ -31,10 +31,15 @@ import "./expandableTable.css";
 
 declare module "@mui/x-data-grid" {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface FilterPanelPropsOverrides extends FilterPanelProps<string> { }
+  interface FilterPanelPropsOverrides extends FilterPanelProps<string> {}
 
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface ToolbarPropsOverrides extends TableToolbarProps { }
+  interface ToolbarPropsOverrides extends TableToolbarProps {}
+}
+
+interface ActionsProps<T extends string, U extends AdditionalDataBase> {
+  getCustomActions?: (params: GridRowParams<RowData<T, U>>) => ReactNode[];
+  actionsWidth?: number;
 }
 
 function ExpandableTable<T extends string, U extends AdditionalDataBase>({
@@ -42,19 +47,16 @@ function ExpandableTable<T extends string, U extends AdditionalDataBase>({
   rows,
   columnsToHide,
   filterDefinitions,
-  getCustomActions,
-  actionsWidth = 50,
+  actions,
 }: {
   columns: ColumnDefinition<T>[];
   rows: RowData<InferColumnFields<typeof columns>, U>[];
   columnsToHide?: ColumnsToHideAtBreakpoint<InferColumnFields<typeof columns>>;
   filterDefinitions?: FilterDefinition<InferColumnFields<typeof columns>, U>[];
-  getCustomActions?: (
-    params: GridRowParams<RowData<InferColumnFields<typeof columns>, U>>,
-  ) => ReactNode[];
-  actionsWidth?: number;
+  actions?: ActionsProps<InferColumnFields<typeof columns>, U>;
 }) {
   type ColumnField = InferColumnFields<typeof columns>;
+  const defaultActionsWidth = 50;
 
   const { expandedRow, expandRow, collapseRow } = useExpandTableRow<
     ColumnField,
@@ -80,29 +82,20 @@ function ExpandableTable<T extends string, U extends AdditionalDataBase>({
     {
       field: "actions",
       type: "actions",
-      width: actionsWidth,
+      width: actions?.actionsWidth ?? defaultActionsWidth,
       hideable: false,
       cellClassName: "actions-column",
       getActions: (params: GridRowParams<RowData<ColumnField, U>>) => [
-        <GridActionsCellItem
+        <ActionItem
           key={1}
-          style={{
-            boxShadow: "none"
-          }}
-          icon={
-            <OpenInFullIcon
-              sx={{
-                color: "primary.main",
-              }}
-            />
-          }
+          Icon={OpenInFullIcon}
           onClick={() => expandRow(params.row)}
           label="Expand"
         />,
-        ...(getCustomActions
-          ? (getCustomActions(
-            params,
-          ) as readonly React.ReactElement<GridActionsCellItemProps>[])
+        ...(actions?.getCustomActions
+          ? (actions.getCustomActions(
+              params,
+            ) as readonly React.ReactElement<GridActionsCellItemProps>[])
           : []),
       ],
     },
