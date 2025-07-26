@@ -44,19 +44,26 @@ interface ActionsProps<T extends string, U extends AdditionalDataBase> {
 
 type CustomColumnField = "actions";
 
+interface ExpandableTableProps<T extends string, U extends AdditionalDataBase> {
+  columns: ColumnDefinition<T>[];
+  rows: RowData<InferColumnFields<ColumnDefinition<T>[]>, U>[];
+  columnsToHide?: ColumnsToHideAtBreakpoint<
+    InferColumnFields<ColumnDefinition<T>[]>
+  >;
+  filterDefinitions?: FilterDefinition<
+    InferColumnFields<ColumnDefinition<T>[]>,
+    U
+  >[];
+  actions?: ActionsProps<InferColumnFields<ColumnDefinition<T>[]>, U>;
+}
+
 function ExpandableTable<T extends string, U extends AdditionalDataBase>({
   columns,
   rows,
   columnsToHide,
   filterDefinitions,
   actions,
-}: {
-  columns: ColumnDefinition<T>[];
-  rows: RowData<InferColumnFields<typeof columns>, U>[];
-  columnsToHide?: ColumnsToHideAtBreakpoint<InferColumnFields<typeof columns>>;
-  filterDefinitions?: FilterDefinition<InferColumnFields<typeof columns>, U>[];
-  actions?: ActionsProps<InferColumnFields<typeof columns>, U>;
-}) {
+}: ExpandableTableProps<T, U>) {
   type ColumnField = InferColumnFields<typeof columns>;
   const defaultActionsWidth = 50;
 
