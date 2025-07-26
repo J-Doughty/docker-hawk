@@ -14,7 +14,7 @@ import PrimaryPageLayout from "../../shared/layout/primaryPageLayout";
 import ActionItem from "../../shared/table/actionItem";
 import ExpandableTable from "../../shared/table/expandableTable";
 
-interface DockerContainerSummary extends ContainerSummary {
+export interface DockerContainerSummary extends ContainerSummary {
   key: string;
   composeProject?: string;
 }
