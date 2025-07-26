@@ -42,6 +42,8 @@ interface ActionsProps<T extends string, U extends AdditionalDataBase> {
   actionsWidth?: number;
 }
 
+type CustomColumnField = "actions";
+
 function ExpandableTable<T extends string, U extends AdditionalDataBase>({
   columns,
   rows,
@@ -78,7 +80,7 @@ function ExpandableTable<T extends string, U extends AdditionalDataBase>({
       columnsToHide: columnsToHide ?? {},
     });
 
-  columns = [
+  const columnDefinitions: ColumnDefinition<T | CustomColumnField>[] = [
     {
       field: "actions",
       type: "actions",
@@ -113,7 +115,7 @@ function ExpandableTable<T extends string, U extends AdditionalDataBase>({
     <div style={{ maxHeight: "100%", width: "100%", overflow: "auto" }}>
       <DataGrid
         rows={filteredRowData}
-        columns={columns}
+        columns={columnDefinitions}
         hideFooter
         columnVisibilityModel={computedVisibility}
         onColumnVisibilityModelChange={onColumnVisibilityModelChange}
