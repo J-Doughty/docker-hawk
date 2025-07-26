@@ -51,12 +51,6 @@ export type ColumnDefinition<T extends string> = GridColDef & {
   field: T;
 };
 
-// TODO this breaks if you remove the exclude for some reason,
-// if you add e.g columnsToHide={{ xs: ["notAColumn"] }}
-// then the error is displayed under "rows" and not columnsToHide
-export type InferColumnFields<T extends readonly ColumnDefinition<string>[]> =
-  Exclude<T[number]["field"], never>;
-
 export type RowData<T extends string, U extends AdditionalDataBase> = Record<
   T,
   RowValue

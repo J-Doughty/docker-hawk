@@ -23,7 +23,6 @@ import {
   ColumnDefinition,
   ColumnsToHideAtBreakpoint,
   FilterDefinition,
-  InferColumnFields,
   RowData,
 } from "./types";
 
@@ -37,24 +36,27 @@ declare module "@mui/x-data-grid" {
   interface ToolbarPropsOverrides extends TableToolbarProps {}
 }
 
+// Exclude never to improve error messages, e.g
+// if you add e.g columnsToHide={{ xs: ["notAColumn"] }}
+// then the error is displayed under "columnsToHide" not "rows"
+type InferColumnFields<T extends string> = Exclude<
+  ColumnDefinition<T>[][number]["field"],
+  never
+>;
+
+type CustomColumnField = "actions";
+
 interface ActionsProps<T extends string, U extends AdditionalDataBase> {
   getCustomActions?: (params: GridRowParams<RowData<T, U>>) => ReactNode[];
   actionsWidth?: number;
 }
 
-type CustomColumnField = "actions";
-
 interface ExpandableTableProps<T extends string, U extends AdditionalDataBase> {
   columns: ColumnDefinition<T>[];
-  rows: RowData<InferColumnFields<ColumnDefinition<T>[]>, U>[];
-  columnsToHide?: ColumnsToHideAtBreakpoint<
-    InferColumnFields<ColumnDefinition<T>[]>
-  >;
-  filterDefinitions?: FilterDefinition<
-    InferColumnFields<ColumnDefinition<T>[]>,
-    U
-  >[];
-  actions?: ActionsProps<InferColumnFields<ColumnDefinition<T>[]>, U>;
+  rows: RowData<InferColumnFields<T>, U>[];
+  columnsToHide?: ColumnsToHideAtBreakpoint<InferColumnFields<T>>;
+  filterDefinitions?: FilterDefinition<InferColumnFields<T>, U>[];
+  actions?: ActionsProps<InferColumnFields<T>, U>;
 }
 
 function ExpandableTable<T extends string, U extends AdditionalDataBase>({
@@ -64,19 +66,15 @@ function ExpandableTable<T extends string, U extends AdditionalDataBase>({
   filterDefinitions,
   actions,
 }: ExpandableTableProps<T, U>) {
-  type ColumnField = InferColumnFields<typeof columns>;
   const defaultActionsWidth = 50;
 
-  const { expandedRow, expandRow, collapseRow } = useExpandTableRow<
-    ColumnField,
-    U
-  >();
+  const { expandedRow, expandRow, collapseRow } = useExpandTableRow();
   const {
     filterValues,
     setFilterValues,
     filteredRowData,
     selectFilterOptions,
-  } = useTableFilters<ColumnField, U>({
+  } = useTableFilters({
     filterDefinitions: filterDefinitions ?? [],
     rows,
   });
@@ -94,7 +92,7 @@ function ExpandableTable<T extends string, U extends AdditionalDataBase>({
       width: actions?.actionsWidth ?? defaultActionsWidth,
       hideable: false,
       cellClassName: "actions-column",
-      getActions: (params: GridRowParams<RowData<ColumnField, U>>) => [
+      getActions: (params: GridRowParams<RowData<T, U>>) => [
         <ActionItem
           key={1}
           Icon={OpenInFullIcon}
@@ -111,7 +109,7 @@ function ExpandableTable<T extends string, U extends AdditionalDataBase>({
     ...columns,
   ];
 
-  const filterPanelProps: FilterPanelProps<ColumnField> = {
+  const filterPanelProps: FilterPanelProps<T> = {
     filterValues,
     setFilterValues,
     filterDefinitions,
