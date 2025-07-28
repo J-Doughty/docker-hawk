@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { invoke } from "@tauri-apps/api/core";
 
@@ -26,25 +26,31 @@ const formatContainerName = (names?: string[]) => {
 function ContainerList() {
   const [containers, setContainers] = useState<DockerContainerSummary[]>();
 
-  useEffect(() => {
-    invoke<ContainerSummary[]>("list_containers").then((dockerContainers) =>
-      setContainers(
-        dockerContainers.map((container) => ({
-          ...container,
-          key: container.Id ?? crypto.randomUUID(),
-          // TODO map labels into their own object, possibly on the rust side
-          composeProject: container.Labels?.["com.docker.compose.project"],
-          name: formatContainerName(container.Names),
-        })),
-      ),
+  const getContainers = useCallback(async () => {
+    const dockerContainers =
+      await invoke<ContainerSummary[]>("list_containers");
+    setContainers(
+      dockerContainers.map((container) => ({
+        ...container,
+        key: container.Id ?? crypto.randomUUID(),
+        // TODO map labels into their own object, possibly on the rust side
+        composeProject: container.Labels?.["com.docker.compose.project"],
+        name: formatContainerName(container.Names),
+      })),
     );
+  }, []);
+
+  useEffect(() => {
+    getContainers();
   }, []);
 
   return (
     <PrimaryPageLayout>
       <h1>Containers</h1>
       <section className="h-100 overflow-hidden">
-        {containers && <ContainerTable containers={containers} />}
+        {containers && (
+          <ContainerTable containers={containers} refreshData={getContainers} />
+        )}
       </section>
     </PrimaryPageLayout>
   );
