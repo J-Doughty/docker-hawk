@@ -51,6 +51,9 @@ pub fn run() {
             say_hello,
             commands::docker::list_images,
             commands::docker::list_containers,
+            commands::docker::start_container,
+            commands::docker::stop_container,
+            commands::docker::delete_container,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

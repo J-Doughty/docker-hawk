@@ -9,8 +9,19 @@ import ContainerTable from "./containerTable";
 
 export interface DockerContainerSummary extends ContainerSummary {
   key: string;
+  name?: string;
   composeProject?: string;
 }
+
+const formatContainerName = (names?: string[]) => {
+  const primaryName = names?.[0];
+
+  if (!primaryName) {
+    return undefined;
+  }
+
+  return primaryName.charAt(0) === "/" ? primaryName.substring(1) : primaryName;
+};
 
 function ContainerList() {
   const [containers, setContainers] = useState<DockerContainerSummary[]>();
@@ -23,6 +34,7 @@ function ContainerList() {
           key: container.Id ?? crypto.randomUUID(),
           // TODO map labels into their own object, possibly on the rust side
           composeProject: container.Labels?.["com.docker.compose.project"],
+          name: formatContainerName(container.Names),
         })),
       ),
     );

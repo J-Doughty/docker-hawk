@@ -2,6 +2,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import StopIcon from "@mui/icons-material/Stop";
 import Typography from "@mui/material/Typography";
+import { invoke } from "@tauri-apps/api/core";
 
 import { ContainerSummaryStateEnum } from "../../../types/tauri/commands/docker/containerSummary";
 import ActionItem from "../../shared/table/actionItem";
@@ -15,29 +16,32 @@ import {
 import { DockerContainerSummary } from "./containerList";
 
 interface ActionIconProps {
+  containerName?: string;
   key: number;
 }
 
-function StartContainerIcon({ key }: ActionIconProps) {
+function StartContainerButton({ containerName, key }: ActionIconProps) {
   return (
     <ActionItem
       key={key}
       Icon={PlayArrowIcon}
-      onClick={() => true}
+      onClick={() => invoke("start_container", { containerName }).then()}
       label={"Start"}
       colour={"#3f8cb5"}
+      isDisabled={containerName === undefined}
     />
   );
 }
 
-function StopContainerIcon({ key }: ActionIconProps) {
+function StopContainerButton({ containerName, key }: ActionIconProps) {
   return (
     <ActionItem
       key={key}
       Icon={StopIcon}
-      onClick={() => true}
+      onClick={() => invoke("stop_container", { containerName }).then()}
       label={"Stop"}
       colour={"#b5a33f"}
+      isDisabled={containerName === undefined}
     />
   );
 }
@@ -133,9 +137,15 @@ function ContainerTable({
 
           return [
             isContainerRunning ? (
-              <StopContainerIcon key={2} />
+              <StopContainerButton
+                containerName={params.row.name?.toString()}
+                key={2}
+              />
             ) : (
-              <StartContainerIcon key={2} />
+              <StartContainerButton
+                containerName={params.row.name?.toString()}
+                key={2}
+              />
             ),
             <ActionItem
               key={3}
@@ -150,7 +160,7 @@ function ContainerTable({
       }}
       rows={containers.map((container) => ({
         id: container.key,
-        name: container.Names?.join(", "),
+        name: container.name,
         containerId: container.Id?.slice(0, 11),
         image: container.Image,
         state: container.State,
@@ -160,7 +170,7 @@ function ContainerTable({
           title: "Container details",
           body: (
             <Typography>
-              <strong>Name:</strong> {container.Names?.join(", ")}
+              <strong>Name:</strong> {container.name}
             </Typography>
           ),
         },
