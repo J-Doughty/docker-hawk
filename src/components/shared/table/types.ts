@@ -47,42 +47,26 @@ export type FilterDefinition<T extends string, U extends AdditionalDataBase> =
   | SelectFilter<T, U>;
 
 // These types were created partially from https://github.com/mui/mui-x/issues/4623
-type CustomColumnField = "expand" | "actions";
-
-export type ColumnField<T extends string> = T | CustomColumnField;
-
 export type ColumnDefinition<T extends string> = GridColDef & {
-  field: ColumnField<T>;
+  field: T;
 };
 
-export type InferColumnFields<T extends ColumnDefinition<string>[]> = Exclude<
-  T[number]["field"],
-  CustomColumnField
->;
-
-type RowDataEntry<T extends string> = Record<T, RowValue> & {
+export type RowData<T extends string, U extends AdditionalDataBase> = Record<
+  T,
+  RowValue
+> & {
   id: number | string;
   expanded: {
     title: string;
     body: ReactNode;
   };
-};
-
-type RowWithAddtionalData<
-  T extends string,
-  U extends AdditionalDataBase,
-> = RowDataEntry<T> & {
   additionalData: U;
 };
 
-export type RowData<T extends string, U extends AdditionalDataBase> =
-  | RowWithAddtionalData<T, U>
-  | RowDataEntry<T>;
-
 export interface ColumnsToHideAtBreakpoint<T extends string> {
-  xs?: ColumnField<T>[];
-  sm?: ColumnField<T>[];
-  md?: ColumnField<T>[];
-  lg?: ColumnField<T>[];
-  xl?: ColumnField<T>[];
+  xs?: T[];
+  sm?: T[];
+  md?: T[];
+  lg?: T[];
+  xl?: T[];
 }
