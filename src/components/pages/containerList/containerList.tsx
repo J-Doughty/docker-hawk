@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 
 import { invoke } from "@tauri-apps/api/core";
 
-import {
-  ContainerSummary,
-} from "../../../types/tauri/commands/docker/containerSummary";
+import { ContainerSummary } from "../../../types/tauri/commands/docker/containerSummary";
 import PrimaryPageLayout from "../../shared/layout/primaryPageLayout";
+
 import ContainerTable from "./containerTable";
 
 export interface DockerContainerSummary extends ContainerSummary {
@@ -33,9 +32,7 @@ function ContainerList() {
     <PrimaryPageLayout>
       <h1>Containers</h1>
       <section className="h-100 overflow-hidden">
-        {containers && (
-          <ContainerTable containers={containers} />
-        )}
+        {containers && <ContainerTable containers={containers} />}
       </section>
     </PrimaryPageLayout>
   );
