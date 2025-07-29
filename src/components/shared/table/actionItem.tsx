@@ -1,5 +1,7 @@
+import { ComponentProps } from "react";
+
 import { OverridableComponent } from "@mui/material/OverridableComponent";
-import { SvgIconTypeMap } from "@mui/material/SvgIcon";
+import SvgIcon, { SvgIconTypeMap } from "@mui/material/SvgIcon";
 import { GridActionsCellItem } from "@mui/x-data-grid";
 
 function ActionItem({
@@ -15,7 +17,7 @@ function ActionItem({
   onClick: () => void;
   isDisabled?: boolean;
   key: number;
-  colour?: string;
+  colour?: ComponentProps<typeof SvgIcon>["color"];
 }) {
   return (
     <GridActionsCellItem
@@ -27,10 +29,9 @@ function ActionItem({
       icon={
         <Icon
           sx={(theme) => ({
-            color: !isDisabled
-              ? (colour ?? theme.palette.primary.main)
-              : theme.palette.action.disabled,
+            ...(isDisabled ? { color: theme.palette.action.disabled } : {}),
           })}
+          color={colour}
         />
       }
       onClick={onClick}

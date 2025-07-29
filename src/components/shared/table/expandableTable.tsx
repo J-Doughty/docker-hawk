@@ -98,6 +98,7 @@ function ExpandableTable<T extends string, U extends AdditionalDataBase>({
           Icon={OpenInFullIcon}
           onClick={() => expandRow(params.row)}
           label="Expand"
+          colour="info"
         />,
         ...(actions?.getCustomActions
           ? (actions.getCustomActions(

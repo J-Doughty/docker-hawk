@@ -6,6 +6,7 @@ import { invoke } from "@tauri-apps/api/core";
 
 import { NoArgCallback } from "../../../types/frontend/functions/functionTypes";
 import { ContainerSummaryStateEnum } from "../../../types/tauri/commands/docker/containerSummary";
+import SimpleDialog from "../../shared/modal/simpleDialog";
 import ActionItem from "../../shared/table/actionItem";
 import ExpandableTable from "../../shared/table/expandableTable";
 import {
@@ -20,6 +21,7 @@ interface ActionIconProps {
   containerName?: string;
   key: number;
   refreshData: NoArgCallback;
+  isDisabled?: boolean;
 }
 
 function StartContainerButton({
@@ -36,7 +38,7 @@ function StartContainerButton({
         refreshData();
       }}
       label={"Start"}
-      colour={"#3f8cb5"}
+      colour="success"
       isDisabled={containerName === undefined}
     />
   );
@@ -56,8 +58,44 @@ function StopContainerButton({
         refreshData();
       }}
       label={"Stop"}
-      colour={"#b5a33f"}
+      colour="warning"
       isDisabled={containerName === undefined}
+    />
+  );
+}
+
+function DeleteContainerButton({
+  containerName,
+  refreshData,
+  isDisabled,
+  key,
+}: ActionIconProps) {
+  return (
+    <SimpleDialog
+      title={`Delete ${containerName}`}
+      content={
+        <div>
+          Delete container: &quot;{containerName}&quot;? <br />
+          <br />
+          This action is not reversible.
+        </div>
+      }
+      cancelText="Cancel"
+      confirmText="Delete Container"
+      onConfirm={async () => {
+        await invoke("delete_container", { containerName });
+        refreshData();
+      }}
+      renderTrigger={(openDialog) => (
+        <ActionItem
+          key={key}
+          Icon={DeleteIcon}
+          onClick={openDialog}
+          label="Delete"
+          colour="error"
+          isDisabled={containerName === undefined || isDisabled}
+        />
+      )}
     />
   );
 }
@@ -167,13 +205,11 @@ function ContainerTable({
                 key={2}
               />
             ),
-            <ActionItem
-              key={3}
-              Icon={DeleteIcon}
-              onClick={() => true}
-              label="Delete"
-              colour="#db4b57"
+            <DeleteContainerButton
+              containerName={params.row.name?.toString()}
+              refreshData={refreshData}
               isDisabled={params.row.additionalData.isRunning}
+              key={3}
             />,
           ];
         },
