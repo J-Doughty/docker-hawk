@@ -1,3 +1,4 @@
+
 import CancelIcon from "@mui/icons-material/Cancel";
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -10,6 +11,7 @@ import {
   QuickFilterControl,
   QuickFilterTrigger,
   ToolbarButton,
+  ToolbarButtonProps,
 } from "@mui/x-data-grid";
 
 type OwnerState = {
@@ -21,10 +23,9 @@ const StyledQuickFilter = styled(QuickFilter)({
   alignItems: "center",
 });
 
-// This code is copied from the documentation https://mui.com/x/react-data-grid/components/toolbar/
-// despite this it contains a type error so we type ToobarButton as any
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const StyledToolbarButton = styled(ToolbarButton as any)<{
+const StyledToolbarButton = styled(
+  ToolbarButton as React.ComponentType<ToolbarButtonProps>,
+)<{
   ownerState: OwnerState;
 }>(({ theme, ownerState }) => ({
   gridArea: "1 / 1",
