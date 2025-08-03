@@ -61,7 +61,7 @@ function ImageList() {
               id: image.Id,
               name: image.RepoTags.join(", "),
               size: getSizeAsString(image.Size),
-              numContainers: image.Containers,
+              numContainers: Math.abs(image.Containers),
               createdAt: new Date(image.Created * 1000).toLocaleDateString(),
               expanded: {
                 title: "Image details",

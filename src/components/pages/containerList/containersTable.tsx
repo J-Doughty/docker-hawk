@@ -112,7 +112,7 @@ interface AdditionalContainerData extends Record<string, unknown> {
   isRunning: boolean;
 }
 
-function ContainerTable({
+function ContainersTable({
   containers,
   refreshData,
 }: {
@@ -238,4 +238,4 @@ function ContainerTable({
   );
 }
 
-export default ContainerTable;
+export default ContainersTable;

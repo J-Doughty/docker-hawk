@@ -5,7 +5,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { ContainerSummary } from "../../../types/tauri/commands/docker/containerSummary";
 import PrimaryPageLayout from "../../shared/layout/primaryPageLayout";
 
-import ContainerTable from "./containerTable";
+import ContainersTable from "./containersTable";
 
 export interface DockerContainerSummary extends ContainerSummary {
   key: string;
@@ -49,7 +49,7 @@ function ContainerList() {
       <h1>Containers</h1>
       <section className="h-100 overflow-hidden">
         {containers && (
-          <ContainerTable containers={containers} refreshData={getContainers} />
+          <ContainersTable containers={containers} refreshData={getContainers} />
         )}
       </section>
     </PrimaryPageLayout>
