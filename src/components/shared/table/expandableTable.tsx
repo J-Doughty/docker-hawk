@@ -91,6 +91,7 @@ function ExpandableTable<T extends string, U extends AdditionalDataBase>({
       type: "actions",
       width: actions?.actionsWidth ?? defaultActionsWidth,
       hideable: false,
+      resizable: false,
       cellClassName: "actions-column",
       getActions: (params: GridRowParams<RowData<T, U>>) => [
         <ActionItem

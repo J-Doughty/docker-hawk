@@ -1,13 +1,7 @@
-import DeleteIcon from "@mui/icons-material/Delete";
-import PlayArrowIcon from "@mui/icons-material/PlayArrow";
-import StopIcon from "@mui/icons-material/Stop";
 import Typography from "@mui/material/Typography";
-import { invoke } from "@tauri-apps/api/core";
 
 import { NoArgCallback } from "../../../types/frontend/functions/functionTypes";
 import { ContainerSummaryStateEnum } from "../../../types/tauri/commands/docker/containerSummary";
-import SimpleDialog from "../../shared/modal/simpleDialog";
-import ActionItem from "../../shared/table/actionItem";
 import ExpandableTable from "../../shared/table/expandableTable";
 import {
   ColumnDefinition,
@@ -15,90 +9,10 @@ import {
   FilterDefinition,
 } from "../../shared/table/types";
 
+import DeleteContainerButton from "./actions/DeleteContainerButton";
+import StartContainerButton from "./actions/StartContainerButton";
+import StopContainerButton from "./actions/StopContainerButton";
 import { DockerContainerSummary } from "./containerList";
-
-interface ActionIconProps {
-  containerName?: string;
-  key: number;
-  refreshData: NoArgCallback;
-  isDisabled?: boolean;
-}
-
-function StartContainerButton({
-  containerName,
-  refreshData,
-  key,
-}: ActionIconProps) {
-  return (
-    <ActionItem
-      key={key}
-      Icon={PlayArrowIcon}
-      onClick={async () => {
-        await invoke("start_container", { containerName });
-        refreshData();
-      }}
-      label={"Start"}
-      colour="success"
-      isDisabled={containerName === undefined}
-    />
-  );
-}
-
-function StopContainerButton({
-  containerName,
-  refreshData,
-  key,
-}: ActionIconProps) {
-  return (
-    <ActionItem
-      key={key}
-      Icon={StopIcon}
-      onClick={async () => {
-        await invoke("stop_container", { containerName });
-        refreshData();
-      }}
-      label={"Stop"}
-      colour="warning"
-      isDisabled={containerName === undefined}
-    />
-  );
-}
-
-function DeleteContainerButton({
-  containerName,
-  refreshData,
-  isDisabled,
-  key,
-}: ActionIconProps) {
-  return (
-    <SimpleDialog
-      title={`Delete ${containerName}`}
-      content={
-        <div>
-          Delete container: &quot;{containerName}&quot;? <br />
-          <br />
-          This action is not reversible.
-        </div>
-      }
-      cancelText="Cancel"
-      confirmText="Delete Container"
-      onConfirm={async () => {
-        await invoke("delete_container", { containerName });
-        refreshData();
-      }}
-      renderTrigger={(openDialog) => (
-        <ActionItem
-          key={key}
-          Icon={DeleteIcon}
-          onClick={openDialog}
-          label="Delete"
-          colour="error"
-          isDisabled={containerName === undefined || isDisabled}
-        />
-      )}
-    />
-  );
-}
 
 type ContainerTableColumnFields =
   | "name"

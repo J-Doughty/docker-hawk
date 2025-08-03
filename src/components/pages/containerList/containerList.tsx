@@ -49,7 +49,10 @@ function ContainerList() {
       <h1>Containers</h1>
       <section className="h-100 overflow-hidden">
         {containers && (
-          <ContainersTable containers={containers} refreshData={getContainers} />
+          <ContainersTable
+            containers={containers}
+            refreshData={getContainers}
+          />
         )}
       </section>
     </PrimaryPageLayout>
