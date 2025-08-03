@@ -16,6 +16,8 @@ import { CSSObject, styled, Theme } from "@mui/material/styles";
 import { FileRoutesByTo } from "../../../routeTree.gen";
 import ThemedLink from "../themedLink/themedLink";
 
+// TODO Copied from https://mui.com/material-ui/react-drawer/, see if we
+//  can simplifiy it
 export interface SidebarLink {
   text: string;
   link: keyof FileRoutesByTo;

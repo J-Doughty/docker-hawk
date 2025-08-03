@@ -13,6 +13,8 @@ import {
   ToolbarButtonProps,
 } from "@mui/x-data-grid";
 
+// This component was copied from the MUI documentation with some minor tweaks https://mui.com/x/react-data-grid/components/toolbar/
+// TODO simplify this
 type OwnerState = {
   expanded: boolean;
 };
@@ -34,6 +36,7 @@ const StyledToolbarButton = styled(
   opacity: ownerState.expanded ? 0 : 1,
   pointerEvents: ownerState.expanded ? "none" : "auto",
   transition: theme.transitions.create(["opacity"]),
+  boxShadow: "none",
 }));
 
 const StyledTextField = styled(TextField)<{
@@ -78,6 +81,15 @@ function SearchPanel() {
                 autoCorrect: "off",
                 spellCheck: false,
                 autoCapitalize: "off",
+                // TODO this overrides the styling on the input to center
+                // the text and remove the strange outline.
+                // The docs don't mention needing this so revisit it
+                sx: {
+                  "> input": {
+                    boxShadow: "none",
+                    paddingTop: "11px",
+                    paddingBottom: "6.5px",
+                  }},
                 startAdornment: (
                   <InputAdornment position="start">
                     <SearchIcon fontSize="small" />
