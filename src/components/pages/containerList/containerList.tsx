@@ -27,6 +27,7 @@ function ContainerList() {
   const [containers, setContainers] = useState<DockerContainerSummary[]>();
 
   const getContainers = useCallback(async () => {
+    // TODO extract these invoke functions out to a common file
     const dockerContainers =
       await invoke<ContainerSummary[]>("list_containers");
     setContainers(

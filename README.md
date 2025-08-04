@@ -1,10 +1,10 @@
 This is a simple app to manage docker containers built with Tauri. It is very much a work in progress and there are some major limitations (see the TODO section).
 
-**Warning**
-Please note that the app currently requires the Docker Daemon to be running before the app is started, I plan on fixing this when I have the time (point one in the TODO section).
+> [!WARNING]
+> Please note that the app currently requires the Docker Daemon to be running before the app is started, I plan on fixing this when I have the time (point one in the TODO section).
 
-**Warning**
-This app primarily targets Linux given Linux supports running the Docker Engine as a standalone process (automatically starting the Docker Daemon on start up), on other platforms (Mac/Windows) Docker Desktop may be required to start the Docker Daemon.
+> [!WARNING]
+> This app primarily targets Linux given Linux supports running the Docker Engine as a standalone process (automatically starting the Docker Daemon on start up), on other platforms (Mac/Windows) Docker Desktop may be required to start the Docker Daemon.
 
 # TODO
 - Add in error handling, for instance the app currently crashes if the docker daemon is not running
