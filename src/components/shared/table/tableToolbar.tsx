@@ -1,5 +1,6 @@
 import FilterListIcon from "@mui/icons-material/FilterList";
 import ViewColumnIcon from "@mui/icons-material/ViewColumn";
+import { styled } from "@mui/material";
 import Tooltip from "@mui/material/Tooltip";
 import {
   ColumnsPanelTrigger,
@@ -10,7 +11,6 @@ import {
 } from "@mui/x-data-grid";
 
 import SearchPanel from "./searchPanel";
-import { styled } from "@mui/material";
 
 export interface TableToolbarProps {
   showFiltersButton: boolean;
@@ -26,17 +26,13 @@ function TableToolbar({ showFiltersButton = true }: TableToolbarProps) {
   return (
     <Toolbar>
       <Tooltip title="Columns">
-        <ColumnsPanelTrigger
-          render={<StyledToolbarButton />}
-        >
+        <ColumnsPanelTrigger render={<StyledToolbarButton />}>
           <ViewColumnIcon fontSize="small" />
         </ColumnsPanelTrigger>
       </Tooltip>
       {showFiltersButton && (
         <Tooltip title="Filters">
-          <FilterPanelTrigger
-            render={<StyledToolbarButton />}
-          >
+          <FilterPanelTrigger render={<StyledToolbarButton />}>
             <FilterListIcon fontSize="small" />
           </FilterPanelTrigger>
         </Tooltip>

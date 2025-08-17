@@ -9,21 +9,29 @@ import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Switch from "@mui/material/Switch";
 
-import { FilterDefinition, FilterForm, RowValue } from "./types";
+import {
+  AdditionalDataBase,
+  FilterDefinition,
+  FilterForm,
+  RowValue,
+} from "./types";
 
-export interface FilterPanelProps<T extends string> {
+export interface FilterPanelProps<
+  T extends string,
+  U extends AdditionalDataBase,
+> {
   filterValues: FilterForm;
   setFilterValues: React.Dispatch<React.SetStateAction<FilterForm>>;
-  filterDefinitions: FilterDefinition<T>[] | undefined;
+  filterDefinitions: FilterDefinition<T, U>[] | undefined;
   selectOptions: Partial<Record<T, Set<RowValue>>>;
 }
 
-function FilterPanel<T extends string>({
+function FilterPanel<T extends string, U extends AdditionalDataBase>({
   filterValues,
   setFilterValues,
   filterDefinitions,
   selectOptions,
-}: FilterPanelProps<T>) {
+}: FilterPanelProps<T, U>) {
   const { control } = useForm<typeof filterValues>({
     values: filterValues,
   });

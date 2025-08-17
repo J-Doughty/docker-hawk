@@ -89,7 +89,8 @@ function SearchPanel() {
                     boxShadow: "none",
                     paddingTop: "11px",
                     paddingBottom: "6.5px",
-                  }},
+                  },
+                },
                 startAdornment: (
                   <InputAdornment position="start">
                     <SearchIcon fontSize="small" />

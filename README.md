@@ -7,6 +7,7 @@ This is a simple app to manage docker containers built with Tauri. It is very mu
 > This app primarily targets Linux given Linux supports running the Docker Engine as a standalone process (automatically starting the Docker Daemon on start up), on other platforms (Mac/Windows) Docker Desktop may be required to start the Docker Daemon.
 
 # TODO
+
 - Add in error handling, for instance the app currently crashes if the docker daemon is not running
 - Add container ports to container table
 - Update the data shown in the expanded panel when a row is clicked
@@ -17,6 +18,7 @@ This is a simple app to manage docker containers built with Tauri. It is very mu
 - Make select columns dropdown scrollable
 
 # Getting Started
+
 - Install Rust https://doc.rust-lang.org/cargo/getting-started/installation.html
 - Select node version 20 with NVM
 - cd into `./src`
@@ -25,9 +27,11 @@ This is a simple app to manage docker containers built with Tauri. It is very mu
 - Run `npm run tauri dev` from the root
 
 # Recommended IDE Setup
+
 - [VS Code](https://code.visualstudio.com/) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
 
 # App Examples
+
 Home page:
 ![Home page](./readme/images/image.png)
 

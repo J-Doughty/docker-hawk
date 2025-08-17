@@ -29,9 +29,8 @@ import {
 import "./expandableTable.css";
 
 declare module "@mui/x-data-grid" {
-  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface FilterPanelPropsOverrides extends FilterPanelProps<string> {}
-
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type, @typescript-eslint/no-explicit-any
+  interface FilterPanelPropsOverrides extends FilterPanelProps<string, any> {}
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   interface ToolbarPropsOverrides extends TableToolbarProps {}
 }
@@ -111,7 +110,7 @@ function ExpandableTable<T extends string, U extends AdditionalDataBase>({
     ...columns,
   ];
 
-  const filterPanelProps: FilterPanelProps<T> = {
+  const filterPanelProps: FilterPanelProps<T, U> = {
     filterValues,
     setFilterValues,
     filterDefinitions,

@@ -78,7 +78,7 @@ const appTheme = createTheme({
             scrollbarColor: `${thumb} ${track}`,
             "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
               backgroundColor: track,
-              width: "13px"
+              width: "13px",
             },
             "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
               borderRadius: 8,
