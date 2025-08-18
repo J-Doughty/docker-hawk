@@ -1,18 +1,13 @@
-use std::sync::Arc;
-
 use bollard::Docker;
 
 mod commands;
 mod errors;
-
-struct DockerConnection {
-    pub client: Arc<Docker>,
-}
+mod docker;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let docker = Docker::connect_with_socket_defaults().unwrap();
-    let docker_connection = DockerConnection {
+    let docker_connection = docker::DockerConnection {
         client: docker.into(),
     };
 

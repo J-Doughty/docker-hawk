@@ -7,7 +7,7 @@ use bollard::{
 };
 use tauri::State;
 
-use crate::DockerConnection;
+use crate::docker::DockerConnection;
 
 #[tauri::command]
 pub async fn list_images(docker: State<'_, DockerConnection>) -> Result<Vec<ImageSummary>, String> {
