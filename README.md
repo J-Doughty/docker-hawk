@@ -40,7 +40,7 @@ Container list:
 
 Container list small screen:
 <br>
-Columns are automatically hidden when you go to a smaller screen size. These can be overriden by manually changing the displayed columns
+Columns are automatically hidden when you go to a smaller screen size. These can be overriden by manually changing the displayed columns.
 <br>
 ![Container list small screen](./readme/images/container-small.png)
 
