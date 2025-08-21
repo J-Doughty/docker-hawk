@@ -33,35 +33,35 @@ This is a simple app to manage docker containers built with Tauri. It is very mu
 # App Examples
 
 Home page:
-![Home page](./readme/images/image.png)
+![Home page](./readme/images/home.png)
 
 Container list:
-![Container list](./readme/images/image-1.png)
+![Container list](./readme/images/containers.png)
 
 Container list small screen:
 <br>
 Columns are automatically hidden when you go to a smaller screen size. These can be overriden by manually changing the displayed columns
 <br>
-![Container list small screen](./readme/images/image-2.png)
+![Container list small screen](./readme/images/container-small.png)
 
 Manually set columns:
 <br>
-![Manually set columns](./readme/images/image-3.png)
+![Manually set columns](./readme/images/selectable-columns.png)
 
 Container details:
 <br>
 More information about the container will be added here in the future.
 <br>
-![Container details](./readme/images/image-4.png)
+![Container details](./readme/images/container-details.png)
 
 Image list:
 <br>
-![Image list](./readme/images/image-5.png)
+![Image list](./readme/images/images.png)
 
 Light mode home:
 <br>
-![Light mode home](./readme/images/image-6.png)
+![Light mode home](./readme/images/home-light-mode.png)
 
 Light mode container list:
 <br>
-![Light mode container list](./readme/images/image-7.png)
+![Light mode container list](./readme/images/containers-light-mode.png)
