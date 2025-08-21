@@ -1,2 +1,2 @@
-export { default as DarkHawkUrl } from "./darkHawk.svg?url";
-export { default as LightHawkUrl } from "./lightHawk.svg?url";
+export const DarkHawkPath = "/src/assets/darkHawk.svg";
+export const LightHawkPath = "/src/assets/lightHawk.svg";

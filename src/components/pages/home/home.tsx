@@ -2,14 +2,14 @@ import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import { useTheme } from "@mui/material/styles";
 
-import { DarkHawkUrl, LightHawkUrl } from "../../../assets";
+import { DarkHawkPath, LightHawkPath } from "../../../assets";
 import ThemedLink from "../../shared/themedLink/themedLink";
 
 import "./home.css";
 
 function App() {
   const theme = useTheme();
-  const hawkImage = theme.palette.mode === "light" ? LightHawkUrl : DarkHawkUrl;
+  const hawkImage = theme.palette.mode === "light" ? LightHawkPath : DarkHawkPath;
 
   return (
     <section
