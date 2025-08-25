@@ -1,6 +1,6 @@
 mod commands;
-mod errors;
 mod docker;
+mod errors;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -16,6 +16,11 @@ pub fn run() {
             commands::docker::stop_container,
             commands::docker::delete_container,
         ])
+        .setup(|app| {
+            // TODO restart this if docker connection drops or if the thread panics for some other reason
+            docker::event_listener::start_docker_event_listener(docker::DockerConnection::new());
+            Ok(())
+        })
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
