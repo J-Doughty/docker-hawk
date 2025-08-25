@@ -17,8 +17,7 @@ pub fn run() {
             commands::docker::delete_container,
         ])
         .setup(|app| {
-            // TODO restart this if docker connection drops or if the thread panics for some other reason
-            docker::event_listener::start_docker_event_listener(docker::DockerConnection::new());
+            docker::event_listener::start_docker_event_listener();
             Ok(())
         })
         .run(tauri::generate_context!())
