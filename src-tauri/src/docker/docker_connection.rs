@@ -1,15 +1,13 @@
-use bollard::Docker;
+use bollard::{errors::Error, Docker};
 
 pub struct DockerConnection {
     pub client: Docker,
 }
 
 impl DockerConnection {
-    pub fn new() -> DockerConnection {
-        let docker = Docker::connect_with_socket_defaults().unwrap();
+    pub fn new() -> Result<DockerConnection, Error> {
+        let docker = Docker::connect_with_socket_defaults()?;
 
-        DockerConnection {
-            client: docker.into(),
-        }
+        Ok(DockerConnection { client: docker })
     }
 }

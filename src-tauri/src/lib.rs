@@ -7,7 +7,8 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_opener::init())
-        .manage(docker::DockerConnection::new())
+        // TODO update this so initial call is handled differently, dont do an unwrap here
+        .manage(docker::DockerConnection::new().unwrap())
         .invoke_handler(tauri::generate_handler![
             commands::shell::say_hello,
             commands::docker::list_images,

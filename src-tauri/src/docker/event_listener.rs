@@ -13,15 +13,26 @@ const RETRY_DELAY: Duration = Duration::from_secs(5);
 pub fn start_docker_event_listener() {
     tauri::async_runtime::spawn(async move {
         loop {
-            let docker_connection = DockerConnection::new();
-            let stream = docker_connection.client.events(Some(EventsOptions {
-                filters: Default::default(),
-                since: None,
-                until: None,
-            }));
+            let new_docker_connection = DockerConnection::new();
 
-            handle_docker_events(stream).await;
+            if let Ok(docker_connection) = new_docker_connection {
+                println!("Listening for docker events");
+
+                let stream = docker_connection.client.events(Some(EventsOptions {
+                    filters: Default::default(),
+                    since: None,
+                    until: None,
+                }));
+
+                handle_docker_events(stream).await;
+            };
+
+            println!(
+                "The docker event listener stopped, waiting for {} seconds",
+                RETRY_DELAY.as_secs()
+            );
             sleep(RETRY_DELAY);
+            println!("Attempting to restart docker event listener");
         }
     });
 }
@@ -33,11 +44,14 @@ where
     while let Some(event) = stream.next().await {
         match event {
             Ok(event_message) => handle_docker_event(event_message),
-            // TODO need to exit this if an error is raised here as it may need to reconnect
-            Err(err) => println!(
-                "Unexpected error occured when running the docker event listener: {:?}",
-                err
-            ),
+            Err(err) => {
+                // If an error here it likely means the docker daemon stopped
+                println!(
+                    "Unexpected error occured when running the docker event listener: {:?}",
+                    err
+                );
+                break;
+            }
         };
     }
 }
