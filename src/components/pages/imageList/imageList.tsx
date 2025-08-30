@@ -21,10 +21,10 @@ const getSizeAsString = (numBytes: number) => {
 };
 
 function ImageList() {
-  const [images, setImages] = useState<ImageSummary[]>();
+  const [images, setImages] = useState<ImageSummary[] | undefined>();
 
   useEffect(() => {
-    invoke<ImageSummary[]>("list_images").then((dockerImages) =>
+    invoke<ImageSummary[] | undefined>("list_images").then((dockerImages) =>
       setImages(dockerImages),
     );
   }, []);

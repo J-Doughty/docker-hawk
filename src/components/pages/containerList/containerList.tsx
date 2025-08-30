@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { invoke } from "@tauri-apps/api/core";
 
-import { ContainerSummary } from "../../../types/tauri/commands/docker/containerSummary";
+import { ContainerSummary } from "../../../types/tauri/commands/docker/ContainerSummary";
 import PrimaryPageLayout from "../../shared/layout/primaryPageLayout";
 
 import ContainersTable from "./containersTable";
@@ -24,14 +24,14 @@ const formatContainerName = (names?: string[]) => {
 };
 
 function ContainerList() {
-  const [containers, setContainers] = useState<DockerContainerSummary[]>();
+  const [containers, setContainers] = useState<DockerContainerSummary[] | undefined>();
 
   const getContainers = useCallback(async () => {
     // TODO extract these invoke functions out to a common file
     const dockerContainers =
-      await invoke<ContainerSummary[]>("list_containers");
+      await invoke<ContainerSummary[] | undefined>("list_containers");
     setContainers(
-      dockerContainers.map((container) => ({
+      dockerContainers?.map((container) => ({
         ...container,
         key: container.Id ?? crypto.randomUUID(),
         // TODO map labels into their own object, possibly on the rust side
