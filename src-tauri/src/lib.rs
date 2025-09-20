@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use tokio::sync::Mutex;
 
 mod app_state;
@@ -13,7 +15,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         // TODO update this so initial call is handled differently, dont do an unwrap here
         // consider RwLock so we can read without acquiring the lock
-        .manage(Mutex::new(app_state::AppState::new()))
+        .manage(Arc::new(Mutex::new(app_state::AppState::new())))
         .invoke_handler(tauri::generate_handler![
             commands::shell::say_hello,
             commands::docker::list_images,
@@ -25,7 +27,7 @@ pub fn run() {
         ])
         .setup(|app| {
             // TODO pass down app state
-            docker::event_listener::start_docker_event_listener();
+            docker::event_listener::start_docker_event_listener(app);
             Ok(())
         })
         .run(tauri::generate_context!())

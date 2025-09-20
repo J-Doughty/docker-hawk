@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { listen } from '@tauri-apps/api/event';
 
 import { invoke } from "@tauri-apps/api/core";
 
@@ -26,10 +27,24 @@ const formatContainerName = (names?: string[]) => {
 function ContainerList() {
   const [containers, setContainers] = useState<DockerContainerSummary[] | undefined>();
 
+
+  listen<DockerContainerSummary[]>('containers-updated', (event) => {
+    console.log('Docker event received:', typeof (event.payload), event.payload);
+    setContainers(event.payload.map((container) => ({
+      ...container,
+      key: container.Id ?? crypto.randomUUID(),
+      // TODO map labels into their own object, possibly on the rust side
+      composeProject: container.Labels?.["com.docker.compose.project"],
+      name: formatContainerName(container.Names),
+    })),)
+  });
+
+
   const getContainers = useCallback(async () => {
     // TODO extract these invoke functions out to a common file
     const dockerContainers =
       await invoke<ContainerSummary[] | undefined>("list_containers");
+    console.log("docker", dockerContainers)
     setContainers(
       dockerContainers?.map((container) => ({
         ...container,

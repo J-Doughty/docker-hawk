@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use tokio::sync::Mutex;
 
 use bollard::{
@@ -15,7 +17,7 @@ use crate::responses::InitialSetupResponse;
 // TODO move to setup
 #[tauri::command]
 pub async fn first_time_setup(
-    state: State<'_, Mutex<AppState>>,
+    state: State<'_, Arc<Mutex<AppState>>>,
 ) -> Result<InitialSetupResponse, String> {
     let mut app_state = state.lock().await;
 
@@ -47,7 +49,7 @@ pub async fn list_images(
 
 #[tauri::command]
 pub async fn list_containers(
-    state: State<'_, Mutex<AppState>>,
+    state: State<'_, Arc<Mutex<AppState>>>,
 ) -> Result<Option<Vec<ContainerSummary>>, String> {
     let app_state = state.lock().await;
 
