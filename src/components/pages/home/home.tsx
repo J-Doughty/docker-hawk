@@ -6,27 +6,11 @@ import { DarkHawkUrl, LightHawkUrl } from "../../../assets";
 import ThemedLink from "../../shared/themedLink/themedLink";
 
 import "./home.css";
-import { useCallback, useEffect, useState } from "react";
-import { invoke } from "@tauri-apps/api/core";
-import { InitialSetupResponse } from "../../../types/tauri/commands/docker/InitialSetupResponse";
 
 function App() {
   const theme = useTheme();
-  const [setupData, setSetupData] = useState<InitialSetupResponse>();
-
   const hawkImage = theme.palette.mode === "light" ? LightHawkUrl : DarkHawkUrl;
 
-  const getContainers = useCallback(async () => {
-    // TODO handle the case where this fails
-    setSetupData(
-      await invoke<InitialSetupResponse>("first_time_setup"));
-  }, []);
-
-  useEffect(() => {
-    getContainers();
-  }, []);
-
-  // TODO handle loading case
   return (
     <section
       className="flex-column flex-grow"

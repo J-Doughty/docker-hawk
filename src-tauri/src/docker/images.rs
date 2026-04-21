@@ -1,10 +1,11 @@
-use bollard::{query_parameters::ListImagesOptionsBuilder, secret::ImageSummary};
+use bollard::{query_parameters::ListImagesOptions, secret::ImageSummary};
 
 use crate::docker::DockerConnection;
 
-pub async fn get_all_images(docker: &DockerConnection) -> Result<Vec<ImageSummary>, String> {
-    let options = ListImagesOptionsBuilder::new().all(true).build();
-
+pub async fn get_all_images(
+    docker: &DockerConnection,
+    options: ListImagesOptions,
+) -> Result<Vec<ImageSummary>, String> {
     docker
         .client
         .list_images(Some(options))

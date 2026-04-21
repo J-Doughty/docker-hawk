@@ -1,59 +1,32 @@
-use std::sync::Arc;
-
-use tokio::sync::Mutex;
-
 use bollard::{
-    query_parameters::{RemoveContainerOptions, StartContainerOptions, StopContainerOptions},
+    query_parameters::{
+        ListContainersOptionsBuilder, ListImagesOptionsBuilder, RemoveContainerOptions,
+        StartContainerOptions, StopContainerOptions,
+    },
     secret::{ContainerSummary, ImageSummary},
 };
 use tauri::State;
 
 use crate::app_state::AppState;
-// TODO rename continer and images modules
 use crate::docker::containers;
 use crate::docker::images;
-use crate::responses::InitialSetupResponse;
 
-// TODO move to setup
 #[tauri::command]
-pub async fn first_time_setup(
-    state: State<'_, Arc<Mutex<AppState>>>,
-) -> Result<InitialSetupResponse, String> {
-    let mut app_state = state.lock().await;
-
-    if (app_state.inital_setup_complete) {
-        return Ok(InitialSetupResponse::from(&app_state));
-    }
-
-    let docker_images = images::get_all_images(&app_state.docker_connection).await?;
-    let docker_containers =
-        containers::get_all_containers(&app_state.docker_connection, Some(true)).await?;
-
-    app_state.images = Some(docker_images);
-    app_state.containers = Some(docker_containers);
-
-    app_state.inital_setup_complete = true;
-
-    Ok(InitialSetupResponse::from(&app_state))
-}
-
-// TODO rename to get all images
-#[tauri::command]
-pub async fn list_images(
-    state: State<'_, Mutex<AppState>>,
-) -> Result<Option<Vec<ImageSummary>>, ()> {
-    let app_state = state.lock().await;
-    println!("images: {:?}", app_state.images);
-    Ok(app_state.images.clone())
+pub async fn list_images(state: State<'_, AppState>) -> Result<Vec<ImageSummary>, String> {
+    let options = ListImagesOptionsBuilder::new().all(true).build();
+    images::get_all_images(&state.docker_connection, options).await
 }
 
 #[tauri::command]
 pub async fn list_containers(
-    state: State<'_, Arc<Mutex<AppState>>>,
-) -> Result<Option<Vec<ContainerSummary>>, String> {
-    let app_state = state.lock().await;
+    state: State<'_, AppState>,
+    include_stopped: Option<bool>,
+) -> Result<Vec<ContainerSummary>, String> {
+    let options = ListContainersOptionsBuilder::new()
+        .all(include_stopped.unwrap_or(true))
+        .build();
 
-    Ok(app_state.containers.clone())
+    containers::get_all_containers(&state.docker_connection, options).await
 }
 
 #[tauri::command]

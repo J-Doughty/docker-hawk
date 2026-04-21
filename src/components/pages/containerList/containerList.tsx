@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { listen } from '@tauri-apps/api/event';
 
 import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
 
 import { ContainerSummary } from "../../../types/tauri/commands/docker/ContainerSummary";
 import PrimaryPageLayout from "../../shared/layout/primaryPageLayout";
@@ -24,36 +24,33 @@ const formatContainerName = (names?: string[]) => {
   return primaryName.charAt(0) === "/" ? primaryName.substring(1) : primaryName;
 };
 
+const mapContainers = (
+  containers: ContainerSummary[],
+): DockerContainerSummary[] =>
+  containers.map((container) => ({
+    ...container,
+    key: container.Id ?? crypto.randomUUID(),
+    // TODO map labels into their own object, possibly on the rust side
+    composeProject: container.Labels?.["com.docker.compose.project"],
+    name: formatContainerName(container.Names),
+  }));
+
 function ContainerList() {
-  const [containers, setContainers] = useState<DockerContainerSummary[] | undefined>();
+  const [containers, setContainers] = useState<
+    DockerContainerSummary[] | undefined
+  >();
 
-
-  listen<DockerContainerSummary[]>('containers-updated', (event) => {
-    console.log('Docker event received:', typeof (event.payload), event.payload);
-    setContainers(event.payload.map((container) => ({
-      ...container,
-      key: container.Id ?? crypto.randomUUID(),
-      // TODO map labels into their own object, possibly on the rust side
-      composeProject: container.Labels?.["com.docker.compose.project"],
-      name: formatContainerName(container.Names),
-    })),)
+  listen<DockerContainerSummary[]>("containers-updated", (event) => {
+    setContainers(mapContainers(event.payload ?? []));
   });
-
 
   const getContainers = useCallback(async () => {
     // TODO extract these invoke functions out to a common file
-    const dockerContainers =
-      await invoke<ContainerSummary[] | undefined>("list_containers");
-    console.log("docker", dockerContainers)
-    setContainers(
-      dockerContainers?.map((container) => ({
-        ...container,
-        key: container.Id ?? crypto.randomUUID(),
-        // TODO map labels into their own object, possibly on the rust side
-        composeProject: container.Labels?.["com.docker.compose.project"],
-        name: formatContainerName(container.Names),
-      })),
+    const dockerContainers = await invoke<ContainerSummary[] | undefined>(
+      "list_containers",
     );
+
+    setContainers(mapContainers(dockerContainers ?? []));
   }, []);
 
   useEffect(() => {

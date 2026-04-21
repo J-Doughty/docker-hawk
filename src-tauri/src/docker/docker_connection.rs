@@ -6,8 +6,10 @@ pub struct DockerConnection {
 
 impl DockerConnection {
     pub fn new() -> Result<DockerConnection, Error> {
-        let docker = Docker::connect_with_socket_defaults()?;
+        let docker = Docker::connect_with_socket_defaults().unwrap();
 
-        Ok(DockerConnection { client: docker })
+        Ok(DockerConnection {
+            client: docker.into(),
+        })
     }
 }

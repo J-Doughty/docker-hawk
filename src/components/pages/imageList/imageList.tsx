@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import Typography from "@mui/material/Typography";
 import { invoke } from "@tauri-apps/api/core";
+import { listen } from "@tauri-apps/api/event";
 
 import { ImageSummary } from "../../../types/tauri/commands/docker/ImageSummary";
 import PrimaryPageLayout from "../../shared/layout/primaryPageLayout";
@@ -20,12 +21,22 @@ const getSizeAsString = (numBytes: number) => {
   return `${(numBytes / bytesInAMegaByte).toFixed(2)} MB`;
 };
 
+const mapImages = (images: ImageSummary[]) =>
+  images.map((image) => ({
+    ...image,
+    key: image.Id,
+  }));
+
 function ImageList() {
-  const [images, setImages] = useState<ImageSummary[] | undefined>();
+  const [images, setImages] = useState<ImageSummary[]>();
+
+  listen<ImageSummary[]>("images-updated", (event) => {
+    setImages(mapImages(event.payload));
+  });
 
   useEffect(() => {
-    invoke<ImageSummary[] | undefined>("list_images").then((dockerImages) =>
-      setImages(dockerImages),
+    invoke<ImageSummary[]>("list_images").then((dockerImages) =>
+      setImages(mapImages(dockerImages)),
     );
   }, []);
 

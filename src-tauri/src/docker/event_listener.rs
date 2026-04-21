@@ -1,23 +1,23 @@
-use std::sync::Arc;
 use std::thread::sleep;
 use std::time::Duration;
-use tokio::sync::Mutex;
 
-use bollard::query_parameters::EventsOptions;
+use bollard::query_parameters::{
+    EventsOptions, ListContainersOptionsBuilder, ListImagesOptionsBuilder,
+};
 use bollard::secret::EventMessage;
 use bollard::{errors::Error, secret::EventMessageTypeEnum};
 use futures::{Stream, StreamExt};
-use tauri::{App, AppHandle, Emitter, Manager, State};
+use tauri::{App, AppHandle, Emitter, Manager};
 
-use crate::app_state::AppState;
-use crate::docker::containers;
 use crate::docker::DockerConnection;
+use crate::docker::{containers, images};
+use crate::errors::docker::DockerEventError;
 
 const RETRY_DELAY: Duration = Duration::from_secs(5);
 
 pub fn start_docker_event_listener(app: &mut App) {
+    // TODO I dont think we should be cloning the handle here https://v2.tauri.app/develop/state-management/
     let app_handle = app.app_handle().clone();
-    let app_state = app.state::<Arc<Mutex<AppState>>>().inner().clone();
 
     tauri::async_runtime::spawn(async move {
         loop {
@@ -32,7 +32,7 @@ pub fn start_docker_event_listener(app: &mut App) {
                     until: None,
                 }));
 
-                handle_docker_events(&app_handle, &app_state, &docker_connection, stream).await;
+                handle_docker_events(&app_handle, &docker_connection, stream).await;
             };
 
             println!(
@@ -47,19 +47,17 @@ pub fn start_docker_event_listener(app: &mut App) {
 
 async fn handle_docker_events<T>(
     app_handle: &AppHandle,
-    app_state: &Arc<Mutex<AppState>>,
     docker_connection: &DockerConnection,
     mut stream: T,
 ) where
     T: Stream<Item = Result<EventMessage, Error>> + Unpin,
 {
+    // TODO use log crate
     while let Some(event) = stream.next().await {
-        match event {
-            Ok(event_message) => {
-                handle_docker_event(&app_handle, &app_state, docker_connection, event_message).await
-            }
+        let event_message = match event {
+            Ok(msg) => msg,
             Err(err) => {
-                // If an error here it likely means the docker daemon stopped
+                // A critical error has occured e.g the Docker Daemon has stopped
                 println!(
                     "Unexpected error occured when running the docker event listener: {:?}",
                     err
@@ -67,31 +65,52 @@ async fn handle_docker_events<T>(
                 break;
             }
         };
+
+        if let Err(err) = handle_docker_event(app_handle, docker_connection, &event_message).await {
+            println!(
+                "Failed to handle docker event: {:?}. {:?}",
+                event_message, err
+            );
+        }
     }
 }
 
 async fn handle_docker_event(
     app_handle: &AppHandle,
-    app_state: &Arc<Mutex<AppState>>,
     docker_connection: &DockerConnection,
-    event: EventMessage,
-) {
-    if let Some(ref event_type) = event.typ {
-        if event_type == &EventMessageTypeEnum::CONTAINER {
-            // TODO Why do i even store the containers in state i can just send an event when they change and refetch it on the frotnend when they go to that page
-            // TODO could also get the container id from the message and just send that container
+    event: &EventMessage,
+) -> Result<(), DockerEventError> {
+    let Some(event_type) = &event.typ else {
+        return Ok(());
+    };
+
+    match event_type {
+        EventMessageTypeEnum::CONTAINER => {
             println!("Container {:?}", event);
-            let updated_containers =
-                containers::get_all_containers(docker_connection, Some(true)).await;
 
-            let mut app_state = app_state.lock().await;
-            app_state.containers = updated_containers.clone().ok();
+            let containers = containers::get_all_containers(
+                docker_connection,
+                ListContainersOptionsBuilder::new().all(true).build(),
+            )
+            .await
+            .map_err(DockerEventError::Containers)?;
 
-            if let Ok(container_event) = updated_containers {
-                app_handle.emit("containers-updated", &container_event);
-            }
-        } else if event_type == &EventMessageTypeEnum::IMAGE {
-            println!("Image {:?}", event);
+            app_handle.emit("containers-updated", &containers)?;
         }
+        EventMessageTypeEnum::IMAGE => {
+            println!("Image {:?}", event);
+
+            let images = images::get_all_images(
+                docker_connection,
+                ListImagesOptionsBuilder::new().all(true).build(),
+            )
+            .await
+            .map_err(DockerEventError::Images)?;
+
+            app_handle.emit("images-updated", &images)?;
+        }
+        _ => {}
     }
+
+    Ok(())
 }

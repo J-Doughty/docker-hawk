@@ -1,15 +1,11 @@
-use bollard::{query_parameters::ListContainersOptionsBuilder, secret::ContainerSummary};
+use bollard::{query_parameters::ListContainersOptions, secret::ContainerSummary};
 
 use crate::docker::DockerConnection;
 
 pub async fn get_all_containers(
     docker: &DockerConnection,
-    include_stopped: Option<bool>,
+    options: ListContainersOptions,
 ) -> Result<Vec<ContainerSummary>, String> {
-    let options = ListContainersOptionsBuilder::new()
-        .all(include_stopped.unwrap_or(true))
-        .build();
-
     docker
         .client
         .list_containers(Some(options))
