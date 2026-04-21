@@ -1,21 +1,21 @@
 This is a simple app to manage docker containers built with Tauri. It is very much a work in progress and there are some major limitations (see the TODO section).
 
 > [!WARNING]
-> Please note that the app currently requires the Docker Daemon to be running before the app is started, I plan on fixing this when I have the time (point one in the TODO section).
+> Please note that the app currently requires the Docker Daemon to be running before the app is started (point one in the TODO section).
 
 > [!WARNING]
-> This app primarily targets Linux given Linux supports running the Docker Engine as a standalone process (automatically starting the Docker Daemon on start up), on other platforms (Mac/Windows) Docker Desktop may be required to start the Docker Daemon.
+> This app primarily targets Linux given Linux supports running the Docker Engine as a standalone process (automatically starting the Docker Daemon on start up), other platforms (Mac/Windows) are more difficult, I will investigate solutions involving Colima/WSL.
+You can currently run on these platforms by starting the Docker Daemon through Docker Desktop.
 
 # TODO
 
-- Add in error handling, for instance the app currently crashes if the docker daemon is not running
-- Add container ports to container table
-- Update the data shown in the expanded panel when a row is clicked
-- Consider storing containers and images in state so we don't have to refetch them
-- Update containers and images periodically or via bollards event system https://docs.rs/bollard/latest/bollard/struct.Docker.html#method.events
-- Consider what to do if the docker daemon stops while the app is running
+- Improve error handling i.e. fail gracefully when the docker dameon is not running or the event listener crashes and implement restart procedures
+- (In Progress) Update containers and images periodically or via bollards event system https://docs.rs/bollard/latest/bollard/struct.Docker.html#method.events
+
 - Consider moving to TanstackTable as this has more free features over MUI DataGrid
-- Make select columns dropdown scrollable
+- Improve sorting and filtering in the tables (visually and adding more options)
+- General fleshing out of the UI, add new columns to tables, better selection of data shown, populate expandable rows
+- Make column selection dropdown scrollable when it goes off the screen
 
 # Getting Started
 
