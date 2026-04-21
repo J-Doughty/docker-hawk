@@ -42,6 +42,7 @@ function FilterPanel<T extends string, U extends AdditionalDataBase>({
   }, [watchForm]);
 
   return (
+    // TODO we should be able to pass in the height here
     <div style={{ padding: "1em 2em", maxHeight: "calc(100vh - 200px)" }}>
       <h3 style={{ padding: 0, marginTop: 0 }}>Filters</h3>
       <form>

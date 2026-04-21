@@ -7,42 +7,36 @@ use bollard::{
 };
 use tauri::State;
 
-use crate::DockerConnection;
+use crate::app_state::AppState;
+use crate::docker::containers;
+use crate::docker::images;
 
 #[tauri::command]
-pub async fn list_images(docker: State<'_, DockerConnection>) -> Result<Vec<ImageSummary>, String> {
+pub async fn list_images(state: State<'_, AppState>) -> Result<Vec<ImageSummary>, String> {
     let options = ListImagesOptionsBuilder::new().all(true).build();
-
-    docker
-        .client
-        .list_images(Some(options))
-        .await
-        .map_err(|err| format!("{err}"))
+    images::get_all_images(&state.docker_connection, options).await
 }
 
 #[tauri::command]
 pub async fn list_containers(
-    docker: State<'_, DockerConnection>,
+    state: State<'_, AppState>,
     include_stopped: Option<bool>,
 ) -> Result<Vec<ContainerSummary>, String> {
     let options = ListContainersOptionsBuilder::new()
         .all(include_stopped.unwrap_or(true))
         .build();
 
-    docker
-        .client
-        .list_containers(Some(options))
-        .await
-        .map_err(|err| format!("{err}"))
+    containers::get_all_containers(&state.docker_connection, options).await
 }
 
 #[tauri::command]
 pub async fn start_container(
-    docker: State<'_, DockerConnection>,
+    state: State<'_, AppState>,
     container_name: &str,
 ) -> Result<(), String> {
     // TODO add in some logging around these and recording of errors
-    docker
+    state
+        .docker_connection
         .client
         .start_container(container_name, None::<StartContainerOptions>)
         .await
@@ -51,10 +45,11 @@ pub async fn start_container(
 
 #[tauri::command]
 pub async fn stop_container(
-    docker: State<'_, DockerConnection>,
+    state: State<'_, AppState>,
     container_name: &str,
 ) -> Result<(), String> {
-    docker
+    state
+        .docker_connection
         .client
         .stop_container(container_name, None::<StopContainerOptions>)
         .await
@@ -63,10 +58,11 @@ pub async fn stop_container(
 
 #[tauri::command]
 pub async fn delete_container(
-    docker: State<'_, DockerConnection>,
+    state: State<'_, AppState>,
     container_name: &str,
 ) -> Result<(), String> {
-    docker
+    state
+        .docker_connection
         .client
         .remove_container(container_name, None::<RemoveContainerOptions>)
         .await

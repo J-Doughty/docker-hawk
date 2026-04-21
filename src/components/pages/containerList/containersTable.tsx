@@ -1,7 +1,7 @@
 import Typography from "@mui/material/Typography";
 
 import { NoArgCallback } from "../../../types/frontend/functions/functionTypes";
-import { ContainerSummaryStateEnum } from "../../../types/tauri/commands/docker/containerSummary";
+import { ContainerSummaryStateEnum } from "../../../types/tauri/commands/docker/ContainerSummary";
 import ExpandableTable from "../../shared/table/expandableTable";
 import {
   ColumnDefinition,
