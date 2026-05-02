@@ -1,3 +1,5 @@
+use tauri::Manager;
+
 mod app_state;
 mod commands;
 mod docker;
@@ -18,7 +20,7 @@ pub fn run() {
             commands::docker::delete_container,
         ])
         .setup(|app| {
-            docker::event_listener::start_docker_event_listener(app);
+            docker::event_listener::start_docker_event_listener(app.app_handle().clone());
             Ok(())
         })
         .run(tauri::generate_context!())

@@ -7,7 +7,7 @@ use bollard::query_parameters::{
 use bollard::secret::EventMessage;
 use bollard::{errors::Error, secret::EventMessageTypeEnum};
 use futures::{Stream, StreamExt};
-use tauri::{App, AppHandle, Emitter, Manager};
+use tauri::{AppHandle, Emitter};
 
 use crate::docker::DockerConnection;
 use crate::docker::{containers, images};
@@ -15,10 +15,7 @@ use crate::errors::docker::DockerEventError;
 
 const RETRY_DELAY: Duration = Duration::from_secs(5);
 
-pub fn start_docker_event_listener(app: &mut App) {
-    // TODO I dont think we should be cloning the handle here https://v2.tauri.app/develop/state-management/
-    let app_handle = app.app_handle().clone();
-
+pub fn start_docker_event_listener(app_handle: AppHandle) {
     tauri::async_runtime::spawn(async move {
         loop {
             let new_docker_connection = DockerConnection::new();
