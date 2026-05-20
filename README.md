@@ -5,7 +5,7 @@ This is a simple app to manage docker containers built with Tauri. It is very mu
 
 > [!WARNING]
 > This app primarily targets Linux given Linux supports running the Docker Engine as a standalone process (automatically starting the Docker Daemon on start up), other platforms (Mac/Windows) are more difficult, I will investigate solutions involving Colima/WSL.
-You can currently run on these platforms by starting the Docker Daemon through Docker Desktop.
+> You can currently run on these platforms by starting the Docker Daemon through Docker Desktop.
 
 # TODO
 

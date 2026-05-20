@@ -9,7 +9,8 @@ import "./home.css";
 
 function App() {
   const theme = useTheme();
-  const hawkImage = theme.palette.mode === "light" ? LightHawkPath : DarkHawkPath;
+  const hawkImage =
+    theme.palette.mode === "light" ? LightHawkPath : DarkHawkPath;
 
   return (
     <section

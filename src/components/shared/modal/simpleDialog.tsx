@@ -1,6 +1,7 @@
 import { ReactNode, useState } from "react";
 
 import {
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -37,26 +38,28 @@ function SimpleDialog({
     <>
       {renderTrigger(openDialog)}
       <Dialog open={open} onClose={closeDialog}>
-        <DialogTitle sx={{ marginBottom: "1em" }}>{title}</DialogTitle>
-        <DialogContent sx={{ marginBottom: "0.5em" }}>{content}</DialogContent>
-        <DialogActions>
-          {
-            <Button onClick={closeDialog} color="info">
-              {cancelText ?? "Close"}
-            </Button>
-          }
-          {
-            <Button
-              onClick={() => {
-                onConfirm();
-                closeDialog();
-              }}
-              color="warning"
-            >
-              {confirmText}
-            </Button>
-          }
-        </DialogActions>
+        <Box sx={{ padding: "0.75em 1.5em" }}>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogContent>{content}</DialogContent>
+          <DialogActions>
+            {
+              <Button onClick={closeDialog} color="info">
+                {cancelText ?? "Close"}
+              </Button>
+            }
+            {
+              <Button
+                onClick={() => {
+                  onConfirm();
+                  closeDialog();
+                }}
+                color="warning"
+              >
+                {confirmText}
+              </Button>
+            }
+          </DialogActions>
+        </Box>
       </Dialog>
     </>
   );
