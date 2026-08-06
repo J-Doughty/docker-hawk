@@ -1,6 +1,8 @@
 import DeleteIcon from "@mui/icons-material/Delete";
+import { Box, Typography } from "@mui/material";
 import { invoke } from "@tauri-apps/api/core";
 
+import CodeSnippet from "../../../shared/codeSnippet/codeSnippet";
 import SimpleDialog from "../../../shared/modal/simpleDialog";
 import ActionItem from "../../../shared/table/actionItem";
 
@@ -14,13 +16,19 @@ function DeleteContainerButton({
 }: ActionIconProps) {
   return (
     <SimpleDialog
-      title={`Delete ${containerName}`}
+      title={
+        <>
+          Delete <CodeSnippet>{containerName}</CodeSnippet>
+        </>
+      }
       content={
-        <div>
-          Delete container: &quot;{containerName}&quot;? <br />
-          <br />
-          This action is not reversible.
-        </div>
+        <Box className="flex flex-col gap-4">
+          <Typography>
+            Are you sure you wish to delete{" "}
+            <CodeSnippet>{containerName}</CodeSnippet>?
+          </Typography>
+          <Typography>This cannot be reversed!</Typography>
+        </Box>
       }
       cancelText="Cancel"
       confirmText="Delete Container"

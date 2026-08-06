@@ -12,7 +12,7 @@ import {
 import { NoArgCallback } from "../../../types/frontend/functions/functionTypes";
 
 interface SimpleDialogProps {
-  title: string;
+  title: ReactNode;
   content: ReactNode;
   confirmText: string;
   cancelText?: string;
@@ -43,7 +43,7 @@ function SimpleDialog({
           <DialogContent>{content}</DialogContent>
           <DialogActions>
             {
-              <Button onClick={closeDialog} color="info">
+              <Button onClick={closeDialog} color="info" variant="outlined">
                 {cancelText ?? "Close"}
               </Button>
             }
@@ -54,6 +54,7 @@ function SimpleDialog({
                   closeDialog();
                 }}
                 color="warning"
+                variant="outlined"
               >
                 {confirmText}
               </Button>
