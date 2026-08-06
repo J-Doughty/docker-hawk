@@ -59,7 +59,6 @@ function ContainerList() {
 
   return (
     <PrimaryPageLayout>
-      <h1>Containers</h1>
       <section className="h-100 overflow-hidden">
         {containers && (
           <ContainersTable

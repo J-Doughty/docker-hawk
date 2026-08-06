@@ -92,35 +92,44 @@ function SidebarLink({
 }) {
   return (
     <ThemedLink to={sidebarLink.link}>
-      <ListItem key={sidebarLink.text} disablePadding sx={{ display: "block" }}>
-        <ListItemButton
-          sx={[
-            {
+      {(isActive) => (
+        <ListItem
+          key={sidebarLink.text}
+          disablePadding
+          sx={{ display: "block" }}
+        >
+          <ListItemButton
+            sx={(theme) => ({
               minHeight: 48,
               px: 2.5,
-            },
-            sidebarExpanded
-              ? { justifyContent: "initial" }
-              : { justifyContent: "center" },
-          ]}
-        >
-          <ListItemIcon
-            sx={[
-              {
-                minWidth: 0,
-                justifyContent: "center",
-              },
-              sidebarExpanded ? { mr: 3 } : { mr: "auto" },
-            ]}
+              ...(isActive
+                ? {
+                    backgroundColor: theme.palette.action.selected,
+                    "&:hover": {
+                      backgroundColor: theme.palette.action.selected,
+                    },
+                  }
+                : {}),
+            })}
           >
-            {sidebarLink.icon}
-          </ListItemIcon>
-          <ListItemText
-            primary={sidebarLink.text}
-            sx={[sidebarExpanded ? { opacity: 1 } : { opacity: 0 }]}
-          />
-        </ListItemButton>
-      </ListItem>
+            <ListItemIcon
+              sx={[
+                {
+                  minWidth: 0,
+                  justifyContent: "center",
+                },
+                sidebarExpanded ? { mr: 3 } : { mr: "auto" },
+              ]}
+            >
+              {sidebarLink.icon}
+            </ListItemIcon>
+            <ListItemText
+              primary={sidebarLink.text}
+              sx={[sidebarExpanded ? { opacity: 1 } : { opacity: 0 }]}
+            />
+          </ListItemButton>
+        </ListItem>
+      )}
     </ThemedLink>
   );
 }
@@ -143,7 +152,7 @@ export default function Sidebar({
   };
 
   return (
-    <Box className="flex-row flex-grow h-100 overflow-hidden">
+    <Box className="flex-row grow h-100 overflow-hidden">
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
           <IconButton
@@ -169,7 +178,7 @@ export default function Sidebar({
       </Drawer>
       <Box
         component="main"
-        className="h-100 flex-column flex-grow"
+        className="h-100 flex-column grow"
         sx={{ overflow: "hidden" }}
       >
         {children}

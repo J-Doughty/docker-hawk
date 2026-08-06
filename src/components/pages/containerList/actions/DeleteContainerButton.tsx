@@ -27,7 +27,9 @@ function DeleteContainerButton({
             Are you sure you wish to delete{" "}
             <CodeSnippet>{containerName}</CodeSnippet>?
           </Typography>
-          <Alert variant="outlined" severity="warning">This cannot be reversed!</Alert>
+          <Alert variant="outlined" severity="warning">
+            This cannot be reversed!
+          </Alert>
         </Box>
       }
       cancelText="Cancel"

@@ -42,7 +42,6 @@ function ImageList() {
 
   return (
     <PrimaryPageLayout>
-      <h1>Images</h1>
       <section className="h-100 overflow-hidden">
         {images && (
           <ExpandableTable
