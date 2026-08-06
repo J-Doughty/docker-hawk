@@ -1,5 +1,5 @@
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Box, Typography } from "@mui/material";
+import { Alert, Box, Typography } from "@mui/material";
 import { invoke } from "@tauri-apps/api/core";
 
 import CodeSnippet from "../../../shared/codeSnippet/codeSnippet";
@@ -22,12 +22,12 @@ function DeleteContainerButton({
         </>
       }
       content={
-        <Box className="flex flex-col gap-4">
+        <Box className="flex flex-col gap-8 py-2">
           <Typography>
             Are you sure you wish to delete{" "}
             <CodeSnippet>{containerName}</CodeSnippet>?
           </Typography>
-          <Typography>This cannot be reversed!</Typography>
+          <Alert variant="outlined" severity="warning">This cannot be reversed!</Alert>
         </Box>
       }
       cancelText="Cancel"
