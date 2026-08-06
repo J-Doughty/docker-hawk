@@ -53,36 +53,36 @@ function FilterPanel<T extends string, U extends AdditionalDataBase>({
               control={control}
               name={filterDefinition.name}
               render={({ field }) =>
-                (filterDefinition.type === "toggle" ? (
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={(field.value as boolean | undefined) ?? false}
-                        onChange={field.onChange}
-                      />
-                    }
-                    label={filterDefinition.label}
-                    {...field}
-                  />
-                ) : (
-                  <FormControl fullWidth>
-                    <InputLabel id="compose-project-select-label">
-                      Compose project
-                    </InputLabel>
-                    <Select label={filterDefinition.label} {...field}>
-                      <MenuItem value="">&nbsp;</MenuItem>
-                      {Array.from(selectOptions[filterDefinition.field] ?? [])
-                        .filter(
-                          (option) => option !== null || option !== undefined,
-                        )
-                        .map((option) => (
-                          <MenuItem key={option} value={option?.toString()}>
-                            {option}
-                          </MenuItem>
-                        ))}
-                    </Select>
-                  </FormControl>
-                ))
+              (filterDefinition.type === "toggle" ? (
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={(field.value as boolean | undefined) ?? false}
+                      onChange={field.onChange}
+                    />
+                  }
+                  label={filterDefinition.label}
+                  {...field}
+                />
+              ) : (
+                <FormControl fullWidth>
+                  <InputLabel id="compose-project-select-label">
+                    Project
+                  </InputLabel>
+                  <Select label={filterDefinition.label} {...field}>
+                    <MenuItem value="">&nbsp;</MenuItem>
+                    {Array.from(selectOptions[filterDefinition.field] ?? [])
+                      .filter(
+                        (option) => option !== null || option !== undefined,
+                      )
+                      .map((option) => (
+                        <MenuItem key={option} value={option?.toString()}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
+              ))
               }
             />
           ))}

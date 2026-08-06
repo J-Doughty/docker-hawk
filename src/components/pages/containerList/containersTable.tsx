@@ -61,39 +61,39 @@ function ContainersTable({
     },
     {
       field: "composeProject",
-      headerName: "Compose project",
+      headerName: "Project",
       flex: 1,
     },
   ];
 
   const columnsToHideAtBreakpoint: ColumnsToHideAtBreakpoint<ContainerTableColumnFields> =
-    {
-      xs: ["image", "state", "containerId", "status"],
-      sm: ["image", "state"],
-    };
+  {
+    xs: ["image", "state", "containerId", "status"],
+    sm: ["image", "state"],
+  };
 
   const filters: FilterDefinition<
     ContainerTableColumnFields,
     AdditionalContainerData
   >[] = [
-    {
-      predicate: (rowData, filterValue) =>
-        filterValue === true || rowData.additionalData.isRunning,
-      type: "toggle",
-      name: "showStoppedContainers",
-      label: "Show stopped containers",
-      default: true,
-    },
-    {
-      field: "composeProject",
-      predicate: (rowData, filterValue) =>
-        (filterValue ? filterValue === rowData.composeProject : true),
-      type: "select",
-      name: "composeProject",
-      label: "Show stopped containers",
-      default: "",
-    },
-  ];
+      {
+        predicate: (rowData, filterValue) =>
+          filterValue === true || rowData.additionalData.isRunning,
+        type: "toggle",
+        name: "showStoppedContainers",
+        label: "Show stopped containers",
+        default: true,
+      },
+      {
+        field: "composeProject",
+        predicate: (rowData, filterValue) =>
+          (filterValue ? filterValue === rowData.composeProject : true),
+        type: "select",
+        name: "composeProject",
+        label: "Show stopped containers",
+        default: "",
+      },
+    ];
 
   return (
     <ExpandableTable
