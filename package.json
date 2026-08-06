@@ -27,6 +27,7 @@
     "@mui/material": "^7.2.0",
     "@mui/x-data-grid": "^8.8.0",
     "@mui/x-data-grid-generator": "^8.8.0",
+    "@tailwindcss/vite": "^4.3.0",
     "@tanstack/react-router": "^1.125.6",
     "@tanstack/react-router-devtools": "^1.125.6",
     "@tauri-apps/api": "^2",
@@ -34,7 +35,8 @@
     "@tauri-apps/plugin-shell": "^2.2.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-hook-form": "^7.60.0"
+    "react-hook-form": "^7.60.0",
+    "tailwindcss": "^4.3.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.31.0",

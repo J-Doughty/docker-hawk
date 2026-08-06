@@ -38,7 +38,7 @@ function SimpleDialog({
     <>
       {renderTrigger(openDialog)}
       <Dialog open={open} onClose={closeDialog}>
-        <Box sx={{ padding: "0.75em 1.5em" }}>
+        <Box className="p-5">
           <DialogTitle>{title}</DialogTitle>
           <DialogContent>{content}</DialogContent>
           <DialogActions>
